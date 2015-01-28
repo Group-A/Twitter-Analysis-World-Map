@@ -1,0 +1,86 @@
+/* Map Container */
+#mapContainer {
+	width:                                 100%;
+	overflow:                              hidden;
+}
+#mapContainer img {
+	vertical-align: bottom;
+}
+
+/* Hashtag Selection Sidebar */
+#hashtagSelectionSidebar {
+	padding:                               45px;
+	width:                                 300px;
+	background:                            rgba(0, 143, 183, 0.8);
+	position:                              absolute;
+	top:                                   0px;
+	left:                                  0px;
+	overflow-y:                            auto;
+}
+
+#hashtagSelectionSidebar h1 {
+	margin:                                0px;
+	font-size:                             32px;
+	text-transform:                        uppercase;
+}
+
+#hashtagSelectionSidebar #separator {
+	margin:                                5px 0px 0px 0px;
+	width:                                 140px;
+	height:                                6px;
+	background:                            #FFF;
+}
+
+#hashtagSelectionSidebar h2 {
+	margin:                                25px 0px 0px 0px;
+	font-size:                             inherit;
+	font-weight:                           normal;
+	line-height:                           28px;
+}
+
+#hashtagSelectionSidebar #hashtags {
+	margin:                                25px 0px 0px 0px;
+	padding:                               0px 0px 15px 0px;
+	counter-reset:                         hashtagCounter;
+	list-style:                            none;
+	border-bottom:                         1px dotted rgba(255, 255, 255, 0.3);
+}
+
+#hashtagSelectionSidebar #hashtags li:before {
+	content:                               "#" counter(hashtagCounter);
+	counter-increment:                     hashtagCounter;
+	float:                                 left;
+}
+
+#hashtagSelectionSidebar #hashtags li {
+	margin:                                15px 0px 0px 0px;
+	padding:                               15px 0px 0px 0px;
+	text-align:                            right;
+	border-top:                            1px dotted rgba(255, 255, 255, 0.3);
+	cursor:                                pointer;
+}
+
+#hashtagSelectionSidebar #closeHashtagSelectionSidebarButton {
+	position:                              absolute;
+	top:                                   70px;
+	right:                                 45px;
+	opacity:                               0.9;
+}
+
+#hashtagSelectionSidebar #closeHashtagSelectionSidebarButton:hover {
+	opacity:                               1;
+	cursor:                                pointer;
+}
+
+#openHashtagSelectionSidebarButton {
+	position:                              absolute;
+	top:                                   45px;
+	left:                                  45px;
+	opacity:                               0.9;
+	display:                               none;
+}
+
+#openHashtagSelectionSidebarButton:hover {
+	opacity:                               1;
+	cursor:                                pointer;
+}
