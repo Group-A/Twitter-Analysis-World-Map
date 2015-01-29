@@ -1,0 +1,258 @@
+<html>
+	<head>
+		<script>
+		
+			// TODO: Fix Canada (?)
+			// TODO: Try and figure out why some maps are completely corrupt. 
+			//       (Might be a coordinate system thing or some stupid bug.)
+
+			var ctx;
+			var countries = {};
+			
+			window.onload = function()
+			{
+				
+				var canvas = document.getElementById("canvas");
+				canvas.width = 1280;
+				canvas.height = 720;
+				
+				ctx = canvas.getContext("2d");
+				ctx.fillStyle = "#131313";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+				
+				loadSvg("worldLow.svg", function(content){
+					var parser = new DOMParser();
+					svg = parser.parseFromString(content, "text/xml");
+					
+					var paths = svg.getElementsByTagName("path");
+					
+					for(var p = 0; p < paths.length; ++p)
+					{
+						var name = paths[p].getAttribute("id");
+						var polygons = parsePath(paths[p].getAttribute("d"));
+						
+						countries[name] = polygons;
+						drawCountry(polygons, (Math.random()*2) - 1);
+					}
+				});
+			}
+			
+			function drawCountry(polygons, attitude)
+			{
+				attitude *= 255;
+					
+				// Numbers adjusted for slightly nicer colours.
+				// TODO: Linear interpolation between 3 colours: negative, neutral and positive.
+				if(attitude > 0)
+					ctx.fillStyle = "rgb(230, " + parseInt(255-(attitude*1.2)) + ", " + parseInt(255-attitude) + ")";
+				else
+					ctx.fillStyle = "rgb(" + parseInt(255+attitude) + ", " + parseInt(255+(attitude/2)) + ", 255)";
+				ctx.strokeStyle = "#000000";
+						
+				for(var i = 0; i < polygons.length; ++i)
+				{
+					var polygon = polygons[i];
+					
+					ctx.beginPath();
+					ctx.moveTo(polygon.vertices[0].x, polygon.vertices[0].y);
+					
+					for(var t = 1; t < polygon.vertices.length; ++t)
+						ctx.lineTo(polygon.vertices[t].x, polygon.vertices[t].y);
+						
+					ctx.fill();
+					ctx.stroke();
+				}
+			}
+			
+			function loadSvg(url, callback)
+			{
+				request = null;
+				
+				if(window.XMLHttpRequest)
+					request = new XMLHttpRequest();
+				else
+					request = new ActiveXObject("Microsoft.XMLHTTP");
+				
+				if(!request)
+					alert("Error: SVG map file could not be loaded.");
+					
+				request.open("GET", url, true);
+				
+				request.onload = function(e)
+				{
+					callback(request.response);
+				}.bind(this);
+				
+				request.send();
+			}
+			
+			function parsePath(dataString)
+			{
+				var data = dataString.split(/(?=[a-zA-Z])/);
+				
+				// The position that relative coordinates will calculate from.
+				var position = null;
+				
+				var polygons = [];
+				polygons[0] = new Polygon();
+				var polygonCount = 0;
+				
+				for(var i = 0; i < data.length; ++i)
+				{
+					result = parseInstruction(data, i, position);
+					
+					if(result.endOfPath == true)
+					{
+						position = null;
+						if(i < data.length-1)
+						{
+							result.newPolygon = true;
+						}
+						else
+							break;
+					}
+					else
+					{
+						if(result.newPolygon && i != 0) // Don't create a new polygon if this is the first vertex.
+						{
+							polygonCount++;
+							polygons[polygonCount] = new Polygon();
+							//console.log("New polygon");
+						}
+						
+						if(!result.endOfPath)
+						{
+							position = result.position;
+							polygons[polygonCount].addVertex(new Vertex(position.x, position.y));
+						}
+					}
+				}
+				
+				return polygons;
+			}
+			
+			function parseInstruction(data, index, position)
+			{
+				var string = data[index];
+				var instruction = string.charAt(0);
+				var relative = !isUpperCase(instruction);
+				
+				var stringCoords = string.slice(1).split(",");
+				
+				var result = {
+					position : {
+						x : 0,
+						y : 0
+					},
+					endOfPath : false,
+					newPolygon : false
+				}
+				
+				
+				switch(instruction.toLowerCase())
+				{
+					case "h": // Horizontal Movement
+						result.position.x = parseFloat(stringCoords[0]);
+						break;
+						
+					case "v": // Vertical Movement
+						result.position.y = parseFloat(stringCoords[0]);
+						break;
+						
+					case "z": // End of path reached
+						result.endOfPath = true;
+						break;
+						
+					case "l": // Line to / Move to
+						result.position.x = parseFloat(stringCoords[0]);
+						result.position.y = parseFloat(stringCoords[1]);
+						break;
+						
+					case "m":
+						result.position.x = parseFloat(stringCoords[0]);
+						result.position.y = parseFloat(stringCoords[1]);
+						result.newPolygon = true;
+						break;
+						
+					default: // An invalid instruction was reached
+						Console.log("Invalid instruction: " + instruction);
+						result.endOfPath = true;
+						break;
+				}
+				
+				if(relative)
+				{
+					if(position == null)
+						console.log("Error: Map reading failed. Relative position requested from no previous position.");
+					result.position.x += position.x;
+					result.position.y += position.y;
+				}
+				
+				return result;
+			}
+			
+			function isUpperCase(string)
+			{
+				return string.toUpperCase() == string;
+			}
+			
+			function Polygon(data)
+			{
+				this.vertices = [];
+				this.indices = [];
+			
+				if(data != undefined)
+				{
+					for(var i = 0; i < data.length; ++i)
+					{
+						this.vertices.push(new Vertex(data[i], data[++i]));
+						this.indices.push(i);
+					}
+				}
+			}
+			
+			Polygon.prototype =
+			{
+				vertices : null,
+				indices : null,
+				
+				addVertex : function(vertex)
+				{
+					this.vertices.push(vertex);
+				},
+				
+				draw : function(ctx)
+				{
+					var vertex = vertices[0];
+					
+					ctx.beginPath();
+					ctx.moveTo(vertex.x, vertex.y);
+					for(var i = 1; i < this.indices.length; ++i)
+					{
+						vertex = vertices[indices[i]];
+						vertex.lineTo(vertex.x, vertex.y);
+					}
+					ctx.stroke();
+				}
+			}
+		
+			function Vertex(x, y)
+			{
+				this.x = x == undefined ? 0 : x;
+				this.y = y == undefined ? 0 : y;
+			}
+			
+			Vertex.prototype = 
+			{
+				x : 0,
+				y : 0,
+			}
+			
+		</script>
+	</head>
+	<body>
+		<canvas id="canvas">
+		</canvas>
+		<br><img src="worldLow.svg" width="1280" height="720"></img>
+	</body>
+</html>
