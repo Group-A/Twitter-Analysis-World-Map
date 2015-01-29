@@ -8,16 +8,26 @@
 
 			var ctx;
 			var countries = {};
+			var negativeColor, neutralColor, positiveColor, backgroundColor;
+			
 			
 			window.onload = function()
 			{
+				negativeColor = new Color(227, 27, 50);
+				neutralColor = new Color(255, 255, 255);
+				positiveColor = new Color(56, 215, 89);
+				// TODO: Implement transparency as a background.
+				//       ( Will likely require a different blend mode to do the country division lines. )
+				backgroundColor = new Color(0, 183, 234);
 				
+				console.log(backgroundColor.getHex());
+			
 				var canvas = document.getElementById("canvas");
 				canvas.width = 1280;
 				canvas.height = 720;
 				
 				ctx = canvas.getContext("2d");
-				ctx.fillStyle = "#131313";
+				ctx.fillStyle = backgroundColor.getHex();
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
 				
 				loadSvg("worldLow.svg", function(content){
@@ -39,15 +49,11 @@
 			
 			function drawCountry(polygons, attitude)
 			{
-				attitude *= 255;
-					
-				// Numbers adjusted for slightly nicer colours.
-				// TODO: Linear interpolation between 3 colours: negative, neutral and positive.
 				if(attitude > 0)
-					ctx.fillStyle = "rgb(230, " + parseInt(255-(attitude*1.2)) + ", " + parseInt(255-attitude) + ")";
+					ctx.fillStyle = neutralColor.blend(positiveColor, attitude).getHex();
 				else
-					ctx.fillStyle = "rgb(" + parseInt(255+attitude) + ", " + parseInt(255+(attitude/2)) + ", 255)";
-				ctx.strokeStyle = "#000000";
+					ctx.fillStyle = neutralColor.blend(negativeColor, Math.abs(attitude)).getHex();
+				ctx.strokeStyle = backgroundColor.getHex();
 						
 				for(var i = 0; i < polygons.length; ++i)
 				{
@@ -62,6 +68,11 @@
 					ctx.fill();
 					ctx.stroke();
 				}
+			}
+			
+			function getAttitudeColor(attitude, negativeColor, neutralColor, positiveColor)
+			{
+				
 			}
 			
 			function loadSvg(url, callback)
@@ -113,11 +124,11 @@
 					}
 					else
 					{
-						if(result.newPolygon && i != 0) // Don't create a new polygon if this is the first vertex.
+						// Don't create a new polygon if this is the first vertex.
+						if(result.newPolygon && i != 0) 
 						{
 							polygonCount++;
 							polygons[polygonCount] = new Polygon();
-							//console.log("New polygon");
 						}
 						
 						if(!result.endOfPath)
@@ -221,6 +232,11 @@
 					this.vertices.push(vertex);
 				},
 				
+				addIndice : function(indice)
+				{
+					this.indices.push(indice);
+				},
+				
 				draw : function(ctx)
 				{
 					var vertex = vertices[0];
@@ -246,6 +262,56 @@
 			{
 				x : 0,
 				y : 0,
+			}
+			
+			function Color(r, g, b)
+			{
+				this.set(r, g, b);
+			}
+			
+			Color.prototype = 
+			{
+				r : 0,
+				g : 0,
+				b : 0,
+				
+				set : function(r, g, b)
+				{
+					this.r = Math.round(r);
+					this.g = Math.round(g);
+					this.b = Math.round(b);
+				},
+				
+				getHex : function()
+				{
+					var values = [];
+					
+					values.push(this.r.toString(16));
+					values.push(this.g.toString(16));
+					values.push(this.b.toString(16));
+					
+					var output = "#";
+					
+					for(var i = 0; i < 3; ++i)
+					{
+						if(values[i].length < 2)
+							values[i] = "0" + values[i];
+						output += values[i];
+					}
+				
+					return output;
+				},
+				
+				blend : function(other, weight)
+				{
+					var dr = other.r - this.r,
+					    dg = other.g - this.g,
+						db = other.b - this.b;
+					
+					return new Color(this.r + (dr*weight),
+					                 this.g + (dg*weight),
+									 this.b + (db*weight));
+				}
 			}
 			
 		</script>
