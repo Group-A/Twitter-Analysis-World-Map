@@ -14,9 +14,8 @@ window.onload = function()
 	negativeColor = new Color(227, 27, 50);
 	neutralColor = new Color(255, 255, 255);
 	positiveColor = new Color(56, 215, 89);
-	// TODO: Implement transparency as a background.
-	//       ( Will likely require a different blend mode to do the country division lines. )
-	backgroundColor = new Color(0, 183, 234);
+	backgroundColor = new Color(0, 0, 0, 0);
+	console.log(backgroundColor.getRGBAString());
 
 	canvas = document.getElementById("map");
 	ctx = canvas.getContext("2d");
@@ -188,7 +187,6 @@ function drawCountry(polygons, attitude)
 		ctx.fillStyle = neutralColor.blend(positiveColor, attitude).getHex();
 	else
 		ctx.fillStyle = neutralColor.blend(negativeColor, Math.abs(attitude)).getHex();
-	ctx.strokeStyle = backgroundColor.getHex();
 			
 	for(var i = 0; i < polygons.length; ++i)
 	{
@@ -201,13 +199,19 @@ function drawCountry(polygons, attitude)
 			ctx.lineTo(polygon.vertices[t].x, polygon.vertices[t].y);
 			
 		ctx.fill();
+		
+		ctx.save();
+		ctx.globalCompositeOperation = "destination-out";
+		ctx.strokeStyle = backgroundColor.getRGBAStringFlippedA();
+		ctx.lineWidth = 2;
 		ctx.stroke();
+		ctx.restore();
 	}
 }
 
 function drawMap()
 {
-	ctx.fillStyle = backgroundColor.getHex();
+	ctx.fillStyle = backgroundColor.getRGBAString();
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	ctx.save();
@@ -304,9 +308,9 @@ Vertex.prototype =
 
 // Class: Color ---------------------------------------------------
 
-function Color(r, g, b)
+function Color(r, g, b, a)
 {
-	this.set(r, g, b);
+	this.set(r, g, b, a);
 }
 
 Color.prototype = 
@@ -314,12 +318,16 @@ Color.prototype =
 	r : 0,
 	g : 0,
 	b : 0,
+	a : 255,
 	
-	set : function(r, g, b)
+	set : function(r, g, b, a)
 	{
+		a = a === undefined ? 255 : a;
+	
 		this.r = Math.round(r);
 		this.g = Math.round(g);
 		this.b = Math.round(b);
+		this.a = Math.round(a);
 	},
 	
 	getHex : function()
@@ -342,14 +350,34 @@ Color.prototype =
 		return output;
 	},
 	
+	getRGBAString : function()
+	{
+		return "rgba(" 
+		     + (this.r/1) + ", "
+			 + (this.g/1) + ", "
+			 + (this.b/1) + ", "
+			 + (this.a/255) + ")";
+	},
+	
+	getRGBAStringFlippedA : function()
+	{
+		return "rgba(" 
+		     + (this.r/1) + ", "
+			 + (this.g/1) + ", "
+			 + (this.b/1) + ", "
+			 + (1 - (this.a/255)) + ")";
+	},
+	
 	blend : function(other, weight)
 	{
 		var dr = other.r - this.r,
 			dg = other.g - this.g,
-			db = other.b - this.b;
+			db = other.b - this.b,
+			da = other.a - this.a;
 		
 		return new Color(this.r + (dr*weight),
 						 this.g + (dg*weight),
-						 this.b + (db*weight));
+						 this.b + (db*weight),
+						 this.a + (dr*weight));
 	}
 }
