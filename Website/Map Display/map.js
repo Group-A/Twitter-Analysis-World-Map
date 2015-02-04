@@ -15,7 +15,6 @@ window.onload = function()
 	neutralColor = new Color(255, 255, 255);
 	positiveColor = new Color(56, 215, 89);
 	backgroundColor = new Color(0, 0, 0, 0);
-	console.log(backgroundColor.getRGBAString());
 
 	canvas = document.getElementById("map");
 	ctx = canvas.getContext("2d");
@@ -60,7 +59,7 @@ function loadSvg(url, callback)
 	request.send();
 }
 
-function parseSvg(content)
+function parseSvg(content, country)
 {
 	var parser = new DOMParser();
 	svg = parser.parseFromString(content, "text/xml");
@@ -70,9 +69,12 @@ function parseSvg(content)
 	for(var p = 0; p < paths.length; ++p)
 	{
 		var name = paths[p].getAttribute("id");
-		var polygons = parsePath(paths[p].getAttribute("d"));
 		
-		countries[name] = polygons;
+		if(country === undefined || name == country)
+		{
+			var polygons = parsePath(paths[p].getAttribute("d"));
+			countries[name] = polygons;
+		}
 	}
 }
 
@@ -174,6 +176,7 @@ function parseInstruction(data, index, position)
 	{
 		if(position == null)
 			console.log("Error: Map reading failed. Relative position requested from no previous position.");
+		
 		result.position.x += position.x;
 		result.position.y += position.y;
 	}
@@ -203,7 +206,7 @@ function drawCountry(polygons, attitude)
 		ctx.save();
 		ctx.globalCompositeOperation = "destination-out";
 		ctx.strokeStyle = backgroundColor.getRGBAStringFlippedA();
-		ctx.lineWidth = 2;
+		ctx.lineWidth = 1;
 		ctx.stroke();
 		ctx.restore();
 	}
