@@ -7,7 +7,7 @@ namespace GroupA.FolksOpinion.UI.UnitTests
     [TestClass]
     public class TwitterApiTests
     {
-        // Using Twitter API documentation exmple keys.
+        // Using Twitter API documentation example keys.
         // Will not authorise.
         private static string consumerKey = "xvz1evFS4wEEPTGEFPHBog";
         private static string consumerSecret = "L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg";

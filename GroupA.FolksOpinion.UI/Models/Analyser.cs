@@ -11,8 +11,8 @@ namespace GroupA.FolksOpinion.UI.Models
     {
         private static ObjectCache cache = MemoryCache.Default; // FIXME: Probably needs moved elsewhere
 
-        private static const String dictionary_path = "Content/Dictionary/";
-        private static const double scalar = 3d;
+        private static String dictionary_path = "Content/Dictionary/";
+        private static double scalar = 3d;
 
         private static void LoadDictionaries()
         {
