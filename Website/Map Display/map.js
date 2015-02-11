@@ -16,9 +16,9 @@ var mouseState = {
 }
 
 var mapPosition = {
-	zoom : 1,
-	x : -30,//44,
-	y : -90//-20
+	zoom : 0.9,
+	x : 0,//44,
+	y : 0//-20
 }
 
 window.onload = function()
