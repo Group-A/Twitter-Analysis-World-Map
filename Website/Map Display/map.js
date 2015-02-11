@@ -9,12 +9,28 @@ var negativeColor, neutralColor, positiveColor, backgroundColor;
 var mapWidth = 1020;
 var mapHeight = 660;
 
+var mouseState = {
+	current : null,
+	last : null,
+	delta : null // TODO: Use and update this.
+}
+
+var mapPosition = {
+	zoom : 1,
+	x : -30,//44,
+	y : -90//-20
+}
+
 window.onload = function()
 {
 	negativeColor = new Color(227, 27, 50);
 	neutralColor = new Color(255, 255, 255);
 	positiveColor = new Color(56, 215, 89);
 	backgroundColor = new Color(0, 0, 0, 0);
+	
+	mouseState.current = new MouseState();
+	mouseState.last = new MouseState();
+	mouseState.delta = new MouseState();
 
 	canvas = document.getElementById("map");
 	ctx = canvas.getContext("2d");
@@ -28,6 +44,73 @@ window.onload = function()
 		parseSvg(content);
 		makeElementFillWindow(canvas);
 	});
+	
+	initKeyListeners(canvas);
+	
+	window.requestAnimationFrame(loop);
+}
+
+function loop()
+{
+	window.requestAnimationFrame(loop);
+	
+	if(mouseState.current.leftButton)
+	{
+		mapPosition.x += (mouseState.current.x - mouseState.last.x)/mapPosition.zoom;
+		mapPosition.y += (mouseState.current.y - mouseState.last.y)/mapPosition.zoom;
+	}
+	
+	// TODO: Make the zoom relative to prevent dumb zooming.
+	mapPosition.zoom -= (mouseState.current.wheelPosition - mouseState.last.wheelPosition)/10;
+	if(mapPosition.zoom < 0.8)
+		mapPosition.zoom = 0.8;
+	
+	makeElementFillWindow(canvas);
+	
+	mouseState.last.x = mouseState.current.x;
+	mouseState.last.y = mouseState.current.y;
+	mouseState.last.wheelPosition = mouseState.current.wheelPosition;
+}
+
+function initKeyListeners(element)
+{
+	element.addEventListener("mousemove", function(e){
+		mouseState.current.x = e.clientX;
+		mouseState.current.y = e.clientY;
+		e.preventDefault();
+	});
+	
+	element.addEventListener("mousedown", function(e){
+		mouseState.current.x = e.clientX;
+		mouseState.current.y = e.clientY;
+		if(e.button == 0)
+			mouseState.current.leftButton = true;
+		e.preventDefault();
+	});
+	
+	element.addEventListener("mouseup", function(e){
+		mouseState.current.x = e.clientX;
+		mouseState.current.y = e.clientY;
+		if(e.button == 0)
+			mouseState.current.leftButton = false;
+		e.preventDefault();
+	});
+	
+	element.addEventListener("mouseleave", function(e){
+		mouseState.current.leftButton = false;
+		e.preventDefault();
+	});
+	
+	var mouseWheelFunction = function(e){
+		if(e.wheelDelta)
+			mouseState.current.wheelPosition += e.wheelDelta;
+		if(e.detail)
+			mouseState.current.wheelPosition += e.detail;
+		e.preventDefault();
+	}
+	
+	element.addEventListener("DOMMouseScroll", mouseWheelFunction);
+	element.addEventListener("mousescroll", mouseWheelFunction);
 }
 
 function makeElementFillWindow(element)
@@ -59,7 +142,7 @@ function loadSvg(url, callback)
 	request.send();
 }
 
-function parseSvg(content, country)
+function parseSvg(content, countryCode)
 {
 	var parser = new DOMParser();
 	svg = parser.parseFromString(content, "text/xml");
@@ -68,12 +151,15 @@ function parseSvg(content, country)
 	
 	for(var p = 0; p < paths.length; ++p)
 	{
-		var name = paths[p].getAttribute("id");
+		var code = paths[p].getAttribute("id");
 		
-		if(country === undefined || name == country)
+		if(countryCode === undefined || code == countryCode)
 		{
 			var polygons = parsePath(paths[p].getAttribute("d"));
-			countries[name] = polygons;
+			var country = new Country(polygons, (Math.random()*2) - 1);
+			country.calculateCenter();
+			country.setName(code, paths[p].getAttribute("title"));
+			countries[code] = country;
 		}
 	}
 }
@@ -184,8 +270,12 @@ function parseInstruction(data, index, position)
 	return result;
 }
 
-function drawCountry(polygons, attitude)
+function drawCountry(country)
 {
+	var polygons = country.polygons;
+	var attitude = country.attitude;
+	
+	// TODO: Sometimes the colours are not assigned properly
 	if(attitude > 0)
 		ctx.fillStyle = neutralColor.blend(positiveColor, attitude).getHex();
 	else
@@ -198,8 +288,23 @@ function drawCountry(polygons, attitude)
 		ctx.beginPath();
 		ctx.moveTo(polygon.vertices[0].x, polygon.vertices[0].y);
 		
-		for(var t = 1; t < polygon.vertices.length; ++t)
-			ctx.lineTo(polygon.vertices[t].x, polygon.vertices[t].y);
+		// TODO: Remove this horrible hack and fix properly.
+		if(country.code == "CA")
+		{
+			// The ultimate hack.
+			for(var t = 1; t < polygon.vertices.length; ++t)
+			{
+				var x = polygon.vertices[t].x;
+				if(x < 20)
+					x += 135;
+				ctx.lineTo(x, polygon.vertices[t].y);
+			}
+		}
+		else
+		{
+			for(var t = 1; t < polygon.vertices.length; ++t)
+				ctx.lineTo(polygon.vertices[t].x, polygon.vertices[t].y);
+		}
 			
 		ctx.fill();
 		
@@ -230,10 +335,34 @@ function drawMap()
 		ctx.translate(((canvas.width - (mapWidth * scale)) * 0.5) / scale, 0);
 	else
 		ctx.translate(0, ((canvas.height - (mapHeight * scale)) * 0.5) / scale);
+		
+	ctx.translate(canvas.width/2, canvas.height/2);
+	ctx.scale(mapPosition.zoom, mapPosition.zoom);
+	ctx.translate(-canvas.width/2, -canvas.height/2);
+	ctx.translate(mapPosition.x, mapPosition.y);
 	
 	for(var c in countries)
-		drawCountry(countries[c], (Math.random()*2) - 1);
+		drawCountry(countries[c]);
 		
+	// TODO: Make text fade in and make the zoom level depend on the size of the country.
+	if(mapPosition.zoom > 4)
+	{
+		ctx.fillStyle = "#000";
+		ctx.textAlign="center";
+		ctx.textBaseline = 'middle';
+		ctx.font = "2pt Verdana";
+		ctx.strokeStyle = "#FFF";
+		ctx.lineWidth = "0.04pt";
+		ctx.lineJoin = 'round';
+		ctx.miterLimit = 2;
+		
+		for(var c in countries)
+		{
+			ctx.strokeText(countries[c].name, countries[c].center.x, countries[c].center.y);
+			ctx.fillText(countries[c].name, countries[c].center.x, countries[c].center.y);
+		}
+	}
+	
 	ctx.restore();
 }
 
@@ -244,7 +373,48 @@ function isUpperCase(string)
 
 
 
-// Class: Polygon -------------------------------------------------
+// Class: Country -------------------------------------------------------------
+
+function Country(polygons, attitude)
+{
+	this.polygons = polygons;
+	this.attitude = attitude === undefined ? 0 : attitude;
+	this.center = new Vector2();
+	this.name = "";
+	this.code = "";
+}
+
+Country.prototype = {
+	polygons : null,
+	attitude : 0,
+	center : null,
+	
+	setName : function(code, name)
+	{
+		this.code = code;
+		this.name = name;
+	},
+	
+	calculateCenter : function()
+	{
+		var largestPolygon = null;
+		var largestPolygonArea = 0;
+		for(var i = 0; i < this.polygons.length; ++i)
+		{
+			var area = this.polygons[i].estimateAreaValue();
+			if(area > largestPolygonArea)
+			{
+				largestPolygon = this.polygons[i];
+				largestPolygonArea = area;
+			}
+		}
+		this.center = largestPolygon.center;
+	}
+}
+
+
+
+// Class: Polygon -------------------------------------------------------------
 
 function Polygon(data)
 {
@@ -265,6 +435,7 @@ Polygon.prototype =
 {
 	vertices : null,
 	indices : null,
+	center : null,
 	
 	addVertex : function(vertex)
 	{
@@ -288,12 +459,41 @@ Polygon.prototype =
 			vertex.lineTo(vertex.x, vertex.y);
 		}
 		ctx.stroke();
+	},
+	
+	calculateCenter : function()
+	{
+		var center = new Vector2();
+		for(var i = 0; i < this.vertices.length; ++i)
+		{
+			center.x += this.vertices[i].x;
+			center.y += this.vertices[i].y;
+		}
+		
+		center.x /= this.vertices.length;
+		center.y /= this.vertices.length;
+		
+		this.center = center;
+	},
+	
+	estimateAreaValue : function()
+	{
+		// This function is only useful for comparing areas between
+		// multiple polygons. Probably should implement actual area
+		// algorithm.
+		
+		if(this.center == null)
+			this.calculateCenter();
+		var totalDist = 0;
+		for(var i = 0; i < this.vertices.length; ++i)
+			totalDist += this.center.distance(this.vertices[i]);
+		return totalDist / this.vertices.length;
 	}
 }
 
 
 
-// Class: Vertex --------------------------------------------------
+// Class: Vertex --------------------------------------------------------------
 
 function Vertex(x, y)
 {
@@ -309,7 +509,34 @@ Vertex.prototype =
 
 
 
-// Class: Color ---------------------------------------------------
+// Class: Vector2 -------------------------------------------------------------
+
+function Vector2(x, y)
+{
+	this.x = x == undefined ? 0 : x;
+	this.y = y == undefined ? 0 : y;
+}
+
+Vector2.prototype = 
+{
+	x : 0,
+	y : 0,
+	
+	distance : function(other)
+	{
+		if(other === undefined)
+			other = new Vector2();
+			
+		var dx = other.x - this.x;
+		var dy = other.y - this.y;
+			
+		return Math.sqrt((dx*dx) + (dy*dy));
+	}
+}
+
+
+
+// Class: Color ---------------------------------------------------------------
 
 function Color(r, g, b, a)
 {
@@ -382,5 +609,30 @@ Color.prototype =
 						 this.g + (dg*weight),
 						 this.b + (db*weight),
 						 this.a + (dr*weight));
+	}
+}
+
+
+
+// Class: MouseState ----------------------------------------------------------
+
+function MouseState()
+{
+	this.buttons = [];
+}
+
+MouseState.prototype = {
+	x : 0,
+	y : 0,
+	wheelPosition : 0,
+	buttons : null,
+	
+	clone : function()
+	{
+		clone = new MouseState();
+		clone.x = this.x;
+		clone.y = this.y;
+		clone.wheelPosition = this.wheelPosition;
+		clone.buttons = this.buttons.slice(0);
 	}
 }
