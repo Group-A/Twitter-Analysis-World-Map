@@ -34,22 +34,20 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public void cacheTweet(double value, String Coords, String hash)
         {
-            connectToDB();
-            MySqlCommand insertTweet = new MySqlCommand("INSERT INTO tweet(analysisVal) VALUES(@val0)", conn);
+            MySqlCommand insertTweet = new MySqlCommand("INSERT INTO tweet(analysisVal) VALUES(@val0)", connectToDB());
             insertTweet.Parameters.AddWithValue("val", value);
             insertTweet.ExecuteNonQuery();
-            MySqlCommand insertCoords = new MySqlCommand("INSERT INTO geocode(coords) VALUES(@val1)", conn);
+            MySqlCommand insertCoords = new MySqlCommand("INSERT INTO geocode(coords) VALUES(@val1)", connectToDB());
             insertCoords.Parameters.AddWithValue("val0", Coords);
             insertCoords.ExecuteNonQuery();
-            MySqlCommand insertHash = new MySqlCommand("INSERT INTO entities(hashtag) VALUES(@val2)", conn);
+            MySqlCommand insertHash = new MySqlCommand("INSERT INTO entities(hashtag) VALUES(@val2)", connectToDB());
             insertHash.Parameters.AddWithValue("val2", hash);
             insertHash.ExecuteNonQuery();
         }
 
         public void displayTweets(String hash)
         {
-            connectToDB();
-            MySqlCommand displayTweets = new MySqlCommand("SELECT * FROM tweet LEFT JOIN geocode ON (geocode.tweetIDstr = tweet.tweetIDstr) LEFT JOIN entities ON (entities.tweetIDstr = tweet.tweetIDstr)",conn);
+            MySqlCommand displayTweets = new MySqlCommand("SELECT * FROM tweet LEFT JOIN geocode ON (geocode.tweetIDstr = tweet.tweetIDstr) LEFT JOIN entities ON (entities.tweetIDstr = tweet.tweetIDstr)",connectToDB());
             displayTweets.ExecuteNonQuery();
         }
 
