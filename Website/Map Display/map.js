@@ -58,6 +58,8 @@ window.onload = function()
 	window.requestAnimationFrame(loop);
 }
 
+
+
 function requestTopic(topic)
 {
 	// TODO: Encode topic correctly.
@@ -71,10 +73,20 @@ function requestTopic(topic)
 		var data = JSON.parse(request.response);
 		console.log(data);
 		// TODO: Process data.
+
+		var sr = document.getElementById("screenReader");
+		sr.innerHTML = "<table>";
+		sr.innerHTML +="<tr><td>Country</td><td>Bias</td><td>Yield</td></tr>";
+		for(c in data.Opinions)
+		{
+			sr.innerHTML += "<tr><td>"+c.Country+"</td><td>"+c.Opinion.Bias+"</td><td>"+c.Opinion.Yield+"</td></tr>";
+		}
+		sr.innerHTML += "</table>";
 	}.bind(this);
 	
 	request.send();
 }
+
 
 function loop()
 {
