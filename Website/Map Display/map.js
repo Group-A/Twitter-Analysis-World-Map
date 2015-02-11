@@ -17,8 +17,8 @@ var mouseState = {
 
 var mapPosition = {
 	zoom : 0.9,
-	x : 0,//44,
-	y : 0//-20
+	x : 0,
+	y : 0
 }
 
 window.onload = function()
@@ -48,6 +48,24 @@ window.onload = function()
 	initKeyListeners(canvas);
 	
 	window.requestAnimationFrame(loop);
+}
+
+function requestTopic(topic)
+{
+	// TODO: Encode topic correctly.
+	var url = document.location.host + "/Data/Opinion?q=" + topic;
+	var request = newRequest();
+	
+	request.open("GET", url, true);
+	
+	request.onload = function(e)
+	{
+		var data = JSON.parse(request.response);
+		console.log(data);
+		// TODO: Process data.
+	}.bind(this);
+	
+	request.send();
 }
 
 function loop()
@@ -120,9 +138,9 @@ function makeElementFillWindow(element)
 	drawMap();
 }
 
-function loadSvg(url, callback)
+function newRequest()
 {
-	request = null;
+	var request = null;
 	
 	if(window.XMLHttpRequest)
 		request = new XMLHttpRequest();
@@ -130,7 +148,14 @@ function loadSvg(url, callback)
 		request = new ActiveXObject("Microsoft.XMLHTTP");
 	
 	if(!request)
-		alert("Error: SVG map file could not be loaded.");
+		console.log("ERROR: Request object could not be created");
+		
+	return request;
+}
+
+function loadSvg(url, callback)
+{
+	var request = newRequest();
 		
 	request.open("GET", url, true);
 	
