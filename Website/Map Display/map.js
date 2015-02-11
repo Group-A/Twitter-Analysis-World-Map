@@ -1,6 +1,14 @@
-// TODO: Fix Canada (?)
-// TODO: Try and figure out why some maps are completely corrupt. 
-//       (Might be a coordinate system thing or some stupid bug.)
+/*
+	File Name: map.js
+	Author(s): Julian Reid
+	Created: 22/01/2015
+	Modified: 11/02/2015
+	Version: 0.7
+	Description:
+		Renders a map with tinted countries that represent opinion data from 
+		twitter. Provides zooming and panning functionality. Also displays
+		text based percentages and statistics when zoomed far enough in.
+*/
 
 var ctx, canvas;
 var countries = {};
