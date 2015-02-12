@@ -119,6 +119,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\MySQLInterface.cs" />
+    <Compile Include="Models\TwitterCacheEngine.cs" />
     <Compile Include="Models\FolksOpinionTwitterApi.cs" />
     <Compile Include="Models\TwitterEntities.cs" />
     <Compile Include="Models\TwitterApi.cs" />
