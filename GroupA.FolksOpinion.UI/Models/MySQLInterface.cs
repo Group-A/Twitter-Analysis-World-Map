@@ -1,13 +1,14 @@
 ﻿/* File:        MySQLInterface.cs
- * Purpose:     Generic abstract interface to connect to a MySQL backend.
+ * Purpose:     Generic interface to connect to a MySQL backend.
  * Version:     0.1
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
- * Exposes:     Public: Nothing, Protected: SendQuery
+ * Exposes:     SendQuery
  * 
- * Description: - Allows a child class to communicate with a
- *              - MySQL backend without any MySQL specific code.
- *              
+ * Description: - Wraps any communication made to a MySql
+ *              - backend.
+ * 
+ * Issues:      - Not sure if this is threaded
  */
 
 using System;
@@ -18,7 +19,7 @@ using MySql.Data.MySqlClient;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public abstract class MySQLInterface
+    public class MySQLInterface
     {
         /* Enum for representing the current state of the SQL connection */
         private enum State
@@ -49,7 +50,7 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Sends a query to the SQL backend. Returns the MySqlDataReader result for output parsing */
-        protected MySqlDataReader SendQuery(String query)
+        public MySqlDataReader SendQuery(String query)
         {
             if (state == State.Error) // Don't continue if we are in an error state
                 return null;

@@ -20,7 +20,7 @@ namespace GroupA.FolksOpinion.UI.Models
         public struct TweetCacheObject // TODO probably shouldn't exist, as this 'object' should be defined elsewhere?
         {
             Tweet tweet;
-            double analysis_value; // FIXME bias/popularity etc
+            WorldOpinions.Opinion opinion;
         }
 
         public struct CacheResult
