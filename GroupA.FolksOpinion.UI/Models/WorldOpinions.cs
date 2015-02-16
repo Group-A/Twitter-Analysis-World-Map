@@ -56,6 +56,15 @@ namespace GroupA.FolksOpinion.UI.Models
 
             // TODO: Implement logic to retrieve opinions.
 
+            // Get tweets from API.
+            /*  GET
+             *  https://api.twitter.com/1.1/search/tweets.json?q=<insertqueryhere>&count=100
+             */
+            var twitterApi = new FolksOpinionTwitterApi();
+            var tweetsJson = twitterApi.GetApiResource("/1.1/search/tweets.json?q=" + subject + "&count=100");
+
+            // Analyse.
+
             return opinions;
         }
 
