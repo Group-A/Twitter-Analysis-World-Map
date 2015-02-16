@@ -74,6 +74,9 @@ ipch/
 *.sdf
 *.cachefile
 
+# asp.net build cache file
+*.cache
+
 # Visual Studio profiler
 *.psess
 *.vsp

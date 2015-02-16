@@ -9,7 +9,7 @@ namespace GroupA.FolksOpinion.UI.Models
 {
     public class Analyser
     {
-        private static ObjectCache cache = MemoryCache.Default; // FIXME: Probably needs moved elsewhere
+        private static ObjectCache cache = MemoryCache.Default;
 
         private static String dictionary_path = "Content/Dictionary/";
         private static double scalar = 3d;
