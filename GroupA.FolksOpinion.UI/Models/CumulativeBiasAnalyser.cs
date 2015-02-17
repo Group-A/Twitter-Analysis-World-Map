@@ -1,7 +1,7 @@
 ﻿/* File:        CumulativeBiasAnalyser.cs
  *              (previously known as "Analyser.cs")
  * Purpose:     Analyses a string for opinion.
- * Version:     1.1
+ * Version:     1.2
  * Created:     
  * Author:      Michael Rodenhurst
  * Exposes:     CumulativeBiasAnalyser
@@ -12,6 +12,11 @@
  *              - Implemented ILexicalBiasAnalyser interface.
  *              - Removed Tweet-specific references.
  *              - Added explicit empty default contructor.
+ *              17th February 2015, ver1.1, Gary Fernie
+ *              - Added functionality to calculate opinion, based on 
+ *                  new pos/neg metrics.
+ *              - Code is 99% copied fom old method (still in file).
+ *              - Bit of a hack.
  */
 
 using System;
@@ -30,16 +35,14 @@ namespace GroupA.FolksOpinion.UI.Models
         private static String dictionary_path = "Content/Dictionary/";
         private static double scalar = 3d;
 
+        // For bias normalisation.
+        private static int arbitraryBiasClamp = 10;
+
         public CumulativeBiasAnalyser() { }
 
         public Opinion Analyse(string text)
         {
-            return new Opinion 
-            { 
-                // TODO: get real opinion values.
-                PositiveBias = 0,
-                NegativeBias = 0
-            };
+            return GetTextOpinion(text);
         }
 
         private static void LoadDictionaries()
@@ -63,7 +66,54 @@ namespace GroupA.FolksOpinion.UI.Models
             cache[name] = words.ToArray();
         }
 
-        public static double GetTextOpinion(String text)
+        public static Opinion GetTextOpinion(String text)
+        {
+            if (!DictionaryLoaded())
+                LoadDictionaries();
+
+            String[] dictionary_positive = (String[])cache.Get("dictionary_en_positive"); // Get postive dictionary
+            String[] dictionary_negative = (String[])cache.Get("dictionary_en_negative"); // Get negative dictionary
+            String[] words = text.Trim().Split(); // Split tweet into words
+
+            /* Iterate over each word, match against the dictionary */
+            int positive_words = 0;
+            int negative_words = 0;
+            for (int i = 0; i < words.Length; i++) // For each word
+            {
+                /* Iterate over each word in the positive and negative dictionary and match it */
+                for (int j = 0; j < dictionary_positive.Length; j++)
+                {
+                    if(dictionary_positive[j] == words[i])
+                    {
+                        positive_words++;
+                        break;
+                    }
+                }
+
+                for (int j = 0; j < dictionary_negative.Length; j++)
+                {
+                    if (dictionary_negative[j] == words[i])
+                    {
+                        negative_words++;
+                        break;
+                    }
+                }
+            }
+
+            double negative_bias = negative_words;
+            double positive_bias = positive_words;
+
+            if (negative_bias > arbitraryBiasClamp) negative_bias = arbitraryBiasClamp;
+            if (positive_bias > arbitraryBiasClamp) positive_bias = arbitraryBiasClamp;
+
+            return new Opinion
+            {
+                PositiveBias = positive_bias,
+                NegativeBias = negative_bias
+            };
+        }
+
+        public static double GetTextBias(String text)
         {
             if (!DictionaryLoaded())
                 LoadDictionaries();
