@@ -135,6 +135,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Dictionary\en_negative.txt" />
+    <Content Include="Content\Dictionary\en_positive.txt" />
+    <Content Include="Content\Dictionary\en_README.txt" />
     <Content Include="Content\Images\closeHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\openHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\placeholderMap.png" />
@@ -163,7 +166,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Dictionary\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
