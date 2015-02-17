@@ -11,8 +11,8 @@
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    interface ILexicalBiasAnalyser
+    public interface ILexicalBiasAnalyser
     {
-        public Opinion Analyse (string text);
+        Opinion Analyse (string text);
     }
 }

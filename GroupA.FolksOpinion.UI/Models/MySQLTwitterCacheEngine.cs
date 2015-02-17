@@ -1,4 +1,18 @@
-﻿using System;
+﻿/* File:        MySQLTwitterCacheEngine.cs
+ * Purpose:     
+ * Version:     1.1
+ * Created:     12th February 2015
+ * Author:      Michael Rodenhurst
+ * Exposes:     MySQLTwitterCacheEngine
+ *
+ * Description: 
+ * 
+ * Changes:     17th February 2015, ver 1.1, Gary Fernie
+ *              - Changed to use new opinion entities.
+ *              - Stubbed to allow build.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -21,27 +35,27 @@ namespace GroupA.FolksOpinion.UI.Models
             sql = new MySQLInterface(host, database, user, password);
         }
 
-        public void CacheTweet(Tweet tweet)
+        public override void CacheTweet(Tweet tweet)
         {
 
         }
 
-        public void UncacheTweet(String id)
+        public override void UncacheTweet(String id)
         {
 
         }
 
-        public TweetCacheObject GetTweet(String id)
+        public override TweetOpinion GetTweet(String id)
         {
-
+            return new TweetOpinion();
         }
 
-        public CacheResult GetTweetsFromCache(String subject) // Empty subject gets all tweets
+        public override CacheResult GetTweetsFromCache(String subject) // Empty subject gets all tweets
         {
-
+            return new CacheResult();
         }
 
-        public void FlushCache() // Clears the cache
+        public override void FlushCache() // Clears the cache
         {
 
         }
