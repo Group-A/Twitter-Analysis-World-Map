@@ -121,7 +121,8 @@ namespace GroupA.FolksOpinion.UI.Models
         public static string GetApiResource(string bearerToken, string resource)
         {
             string response = "";
-            //if (bearerToken == null) return response;
+            if (bearerToken == null) return response;
+            if (bearerToken.Equals("")) return response;
 
             using (var client = new HttpClient())
             {
