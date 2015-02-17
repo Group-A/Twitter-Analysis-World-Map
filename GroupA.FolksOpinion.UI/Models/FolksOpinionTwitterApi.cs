@@ -1,6 +1,6 @@
 ﻿/* File:        FolksOpinionTwitterapi.cs
  * Purpose:     Specialised TwitterApi class for the FolksOpinion application.
- * Version:     1.0
+ * Version:     1.1
  * Created:     9th February 2015
  * Author:      Gary Fernie
  * Exposes:     FolksOpinionTwitterApi
@@ -10,9 +10,14 @@
  *              - Loads keys from application config file.
  *              - Makes key obfuscation checks.
  *              
+ * Changes:     17th February 2015, 1.1
+ *              - Added GetTweets method.
+ *              
  * Bugs:        - Config loading code does not appear to access app's Web.config file.
  */
 
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace GroupA.FolksOpinion.UI.Models
@@ -28,6 +33,12 @@ namespace GroupA.FolksOpinion.UI.Models
                 bearerTokenCredentialsBase64Encoded = EncodeConsumerKeyAndSecret(consumerKey, consumerSecret);
                 bearerToken = GetBearerToken(bearerTokenCredentialsBase64Encoded);
             }
+        }
+
+        /* Returns a colection of Tweets matching a search term. */
+        public IEnumerable<Tweet> GetTweets (string searchTerm)
+        {
+            return JsonConvert.DeserializeObject<IEnumerable<Tweet>>(GetTweetsJson(searchTerm));
         }
 
         /* Loads keys from config file.

@@ -1,4 +1,20 @@
-﻿using System;
+﻿/* File:        CumulativeBiasAnalyser.cs
+ *              (previously known as "Analyser.cs")
+ * Purpose:     Analyses a string for opinion.
+ * Version:     1.1
+ * Created:     
+ * Author:      Michael Rodenhurst
+ * Exposes:     CumulativeBiasAnalyser
+ * 
+ * Description: - Uses a simple word count to find opinion.
+ * 
+ * Changes:     17th February 2015, ver1.1, Gary Fernie
+ *              - Implemented ILexicalBiasAnalyser interface.
+ *              - Removed Tweet-specific references.
+ *              - Added explicit empty default contructor.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -7,12 +23,24 @@ using System.Runtime.Caching;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public class Analyser
+    public class CumulativeBiasAnalyser : ILexicalBiasAnalyser
     {
         private static ObjectCache cache = MemoryCache.Default;
 
         private static String dictionary_path = "Content/Dictionary/";
         private static double scalar = 3d;
+
+        public CumulativeBiasAnalyser() { }
+
+        public Opinion Analyse(string text)
+        {
+            return new Opinion 
+            { 
+                // TODO: get real opinion values.
+                PositiveBias = 0,
+                NegativeBias = 0
+            };
+        }
 
         private static void LoadDictionaries()
         {
@@ -35,14 +63,14 @@ namespace GroupA.FolksOpinion.UI.Models
             cache[name] = words.ToArray();
         }
 
-        public static double GetTweetOpinion(String tweet_text)
+        public static double GetTextOpinion(String text)
         {
             if (!DictionaryLoaded())
                 LoadDictionaries();
 
             String[] dictionary_positive = (String[])cache.Get("dictionary_en_positive"); // Get postive dictionary
             String[] dictionary_negative = (String[])cache.Get("dictionary_en_negative"); // Get negative dictionary
-            String[] words = tweet_text.Trim().Split(); // Split tweet into words
+            String[] words = text.Trim().Split(); // Split tweet into words
 
             /* Iterate over each word, match against the dictionary */
             int positive_words = 0;

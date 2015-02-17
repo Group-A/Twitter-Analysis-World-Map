@@ -1,40 +1,35 @@
 ﻿/* File:        TwitterEntities.cs
  * Purpose:     Represents the various entities in Twitter.
- * Version:     1.0
+ * Version:     1.1
  * Created:     10th February 2015
  * Author:      Gary Fernie
- * Exposes:     Tweet, Places
+ * Exposes:     Tweet, Place
  * 
- * Description: - Various structs to represent entities.
+ * Description: - Various classes to represent entities.
  *              - Not a complete list of entities.
  *              - Entities represented here may be have an imcomplete
  *                list of fields.
- *                
- * INCOMPLETE!
  */
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
     /* Twitter entity: Tweet
      * https://dev.twitter.com/overview/api/tweets
      */
-    public struct Tweet
+    public class Tweet
     {
+        public string id_str { get; set; }
+        public string lang { get; set; }
+        public Place place { get; set; }
+        public string text { get; set; }
     }
 
     /* Twitter entity: Place
      * https://dev.twitter.com/overview/api/places
      */
-    public struct Place
+    public class Place
     {
-        Hashtable attributes;
-        string country;
-        string country_code;
+        public string country { get; set; }
+        public string country_code { get; set; }
     }
 }

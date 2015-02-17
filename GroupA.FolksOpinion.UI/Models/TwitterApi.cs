@@ -1,7 +1,7 @@
 ﻿/* File:        TwitterApi.cs
  * Purpose:     Provides functionality to issue application-only
  *              Oauth2 requests to the Twitter API.
- * Version:     1.1
+ * Version:     1.2
  * Created:     3rd February 2015
  * Modified:    9th February 2015
  * Author:      Gary Fernie
@@ -12,8 +12,10 @@
  *              - Makes http API requests using bearer token.
  *              - Much of the class' functionality can be used in a static context
  * 
- * Changes:     9th February 2015 ver1.1
+ * Changes:     9th February 2015, ver1.1
  *              - Removed application-specific code (generalised class).
+ *              17th February 2015, ver 1.2
+ *              - Added GetTweets method.
  */
 
 using Newtonsoft.Json;
@@ -137,6 +139,13 @@ namespace GroupA.FolksOpinion.UI.Models
         public string GetApiResource(string resource)
         {
             return GetApiResource(bearerToken, resource);
+        }
+
+        /* Uses GetApiResource to get specifically Tweets matching a search term */
+        public string GetTweetsJson(string searchTerm)
+        {
+            // TODO: validate response
+            return GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
         }
 
         /* Checks if keys are null or empty.

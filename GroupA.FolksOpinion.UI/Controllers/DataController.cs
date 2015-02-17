@@ -13,29 +13,15 @@ namespace GroupA.FolksOpinion.UI.Controllers
         // GET: Data/Opinion?q=<query>
         public JsonResult Opinion(string q)
         {
-            var result = Json("", JsonRequestBehavior.AllowGet);
-            var subject = "";
+            var subject = q;
+            var result = "";
+            
+            var opinionator = new Opinionator(subject);
+            var worldOpinion = opinionator.WorldSubjectOpinion;
 
-            // Decode query string form URL encoding.
-            // TODO: Decode query string form URL encoding.
-            subject = q;
+            result = JsonConvert.SerializeObject(worldOpinion);
 
-            // Get opinions for subject.
-            //var opinions = new WorldOpinions(subject);
-
-            // Get tweets from API.
-            // hack
-            // remove keys before committing
-            var consumerKey = "OBFUSCATED";
-            var consumerSecret = "OBFUSCATED";
-            var twitterApi = new TwitterApi(consumerKey, consumerSecret);
-            var tweetsJson = twitterApi.GetApiResource("/1.1/search/tweets.json?q=" + subject + "&count=100");
-
-            // Create Json from opinions data.
-            //result = Json(JsonConvert.SerializeObject(opinions), JsonRequestBehavior.AllowGet);
-            result = Json(JsonConvert.SerializeObject(tweetsJson), JsonRequestBehavior.AllowGet);
-
-            return result;
+            return Json(result, JsonRequestBehavior.AllowGet); ;
         }
     }
 }
