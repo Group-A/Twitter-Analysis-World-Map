@@ -1,6 +1,6 @@
 ﻿/* File:        FolksOpinionTwitterapi.cs
  * Purpose:     Specialised TwitterApi class for the FolksOpinion application.
- * Version:     1.1
+ * Version:     1.2
  * Created:     9th February 2015
  * Author:      Gary Fernie
  * Exposes:     FolksOpinionTwitterApi
@@ -12,8 +12,9 @@
  *              
  * Changes:     17th February 2015, 1.1
  *              - Added GetTweets method.
- *              
- * Bugs:        - Config loading code does not appear to access app's Web.config file.
+ *              17th February 2015, 1.2
+ *              - Changed GetTweets method to better handle responses.
+ *              - Config bug seems resolved.
  */
 
 using Newtonsoft.Json;
@@ -38,7 +39,15 @@ namespace GroupA.FolksOpinion.UI.Models
         /* Returns a colection of Tweets matching a search term. */
         public IEnumerable<Tweet> GetTweets (string searchTerm)
         {
-            return JsonConvert.DeserializeObject<IEnumerable<Tweet>>(GetTweetsJson(searchTerm));
+            var tweetsJson = GetTweetsJson(searchTerm);
+            if (tweetsJson != null)
+                if (!tweetsJson.Equals(""))
+                {
+                    var tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
+                    return tweetSearchResponse.statuses;
+                }
+            
+            return new List<Tweet>();;
         }
 
         /* Loads keys from config file.
@@ -49,7 +58,6 @@ namespace GroupA.FolksOpinion.UI.Models
         private bool LoadKeysFromConfig()
         {
             // Load keys.
-            // TODO: Config access broken; Will retrieve null.
             var newConsumerKey = ConfigurationManager.AppSettings["TwitterApiConsumerKey"];
             var newConsumerSecret = ConfigurationManager.AppSettings["TwitterApiConsumerSecret"];
 

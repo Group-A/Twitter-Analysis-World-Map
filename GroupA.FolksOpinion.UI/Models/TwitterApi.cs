@@ -19,6 +19,7 @@
  */
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
 using System.Runtime.Serialization;
@@ -119,7 +120,8 @@ namespace GroupA.FolksOpinion.UI.Models
          */
         public static string GetApiResource(string bearerToken, string resource)
         {
-            string response = null;
+            string response = "";
+            //if (bearerToken == null) return response;
 
             using (var client = new HttpClient())
             {
@@ -144,8 +146,11 @@ namespace GroupA.FolksOpinion.UI.Models
         /* Uses GetApiResource to get specifically Tweets matching a search term */
         public string GetTweetsJson(string searchTerm)
         {
-            // TODO: validate response
-            return GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
+            var tweets = GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
+            dynamic tweetsObject = JObject.Parse(tweets);
+            if (tweetsObject.errors == null)
+                return tweets;
+            else return "";
         }
 
         /* Checks if keys are null or empty.
