@@ -1,7 +1,7 @@
 ﻿/* File:        CumulativeBiasAnalyser.cs
  *              (previously known as "Analyser.cs")
  * Purpose:     Analyses a string for opinion.
- * Version:     1.2
+ * Version:     1.3
  * Created:     
  * Author:      Michael Rodenhurst
  * Exposes:     CumulativeBiasAnalyser
@@ -12,11 +12,15 @@
  *              - Implemented ILexicalBiasAnalyser interface.
  *              - Removed Tweet-specific references.
  *              - Added explicit empty default contructor.
- *              17th February 2015, ver1.1, Gary Fernie
+ *              17th February 2015, ver1.2, Gary Fernie
  *              - Added functionality to calculate opinion, based on 
  *                  new pos/neg metrics.
  *              - Code is 99% copied fom old method (still in file).
  *              - Bit of a hack.
+ *              17th February 2015, ver1.3, Gary Fernie
+ *              - Fixed dictionary paths.
+ *              - Moved dictionaries to more appropriate folder.
+ *              - Fixed dictionary cache names.
  */
 
 using System;
@@ -32,7 +36,10 @@ namespace GroupA.FolksOpinion.UI.Models
     {
         private static ObjectCache cache = MemoryCache.Default;
 
-        private static String dictionary_path = "Content/Dictionary/";
+        private static String dictionary_path = 
+            System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath 
+            + "App_Data\\Dictionary\\";
+
         private static double scalar = 3d;
 
         // For bias normalisation.
@@ -47,8 +54,8 @@ namespace GroupA.FolksOpinion.UI.Models
 
         private static void LoadDictionaries()
         {
-            LoadDictionary("dictionary_en_pos", dictionary_path + "en_positive.txt");
-            LoadDictionary("dictionary_en_neg", dictionary_path + "en_negative.txt");
+            LoadDictionary("dictionary_en_positive", dictionary_path + "en_positive.txt");
+            LoadDictionary("dictionary_en_negative", dictionary_path + "en_negative.txt");
         }
 
         private static void LoadDictionary(String name, String filepath)
