@@ -115,8 +115,8 @@ namespace GroupA.FolksOpinion.UI.Models
 
             return new Opinion
             {
-                PositiveBias = positive_bias,
-                NegativeBias = negative_bias
+                PositiveBias = positive_bias/10,
+                NegativeBias = negative_bias/10
             };
         }
 
