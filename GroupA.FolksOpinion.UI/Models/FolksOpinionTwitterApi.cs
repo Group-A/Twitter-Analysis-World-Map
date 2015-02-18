@@ -60,7 +60,9 @@ namespace GroupA.FolksOpinion.UI.Models
                         tweetsJson = GetApiResource("/1.1/search/tweets.json"
                             + tweetSearchResponse.search_metadata.next_results);
                         tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
-                        tweets.AddRange(tweetSearchResponse.statuses);
+                        try { tweets.AddRange(tweetSearchResponse.statuses); }
+                        catch (System.ArgumentNullException) { break; }
+                        
                     }
                 }
             
