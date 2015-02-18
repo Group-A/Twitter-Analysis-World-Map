@@ -1,6 +1,6 @@
 /*
 	File Name: map.js
-	Author(s): Julian Reid
+	Author(s): Julian Reid, Jamie Aitken
 	Created: 22/01/2015
 	Modified: 11/02/2015
 	Version: 0.7
@@ -50,12 +50,47 @@ window.onload = function()
 	
 	loadSvg("worldLow.svg", function(content){
 		parseSvg(content);
+		parseJSONData("{\"Subject\":\"Abertay\",\"CountryOpinions\":[{\"Country\":\"AU\",\"Opinion\":{\"PositiveBias\":0.1,\"NegativeBias\":0.0}},{\"Country\":\"GB\",\"Opinion\":{\"PositiveBias\":0.028571428571428574,\"NegativeBias\":0.014285714285714287}}]}");
+	
 		makeElementFillWindow(canvas);
 	});
 	
 	initKeyListeners(canvas);
 	
 	window.requestAnimationFrame(loop);
+}
+
+
+
+function parseJSONData(string)
+{
+	var data = JSON.parse(string);
+	
+	for(var i in data.CountryOpinions)
+	{
+		var opinion = data.CountryOpinions[i];
+		
+		countries[opinion.Country].attitude = 
+			opinion.Opinion.PositiveBias
+		  - opinion.Opinion.NegativeBias;
+	}
+
+	/*var sr = document.getElementById("screenReader");
+	sr.innerHTML = "<table>";
+	sr.innerHTML +="<tr><td>Country</td><td>Bias</td><td>Yield</td></tr>";
+	for(o in data.opinions)
+	{
+		countries.
+		
+		sr.innerHTML += "<tr><td>" 
+					  + data.opinions[o].Country 
+					  + "</td><td>" 
+					  + data.opinions[o].Opinion.Bias
+					  +" </td><td>"
+					  + data.opinions[o].Opinion.Yield
+					  + "</td></tr>";
+	}
+	sr.innerHTML += "</table>";*/
 }
 
 
@@ -70,18 +105,7 @@ function requestTopic(topic)
 	
 	request.onload = function(e)
 	{
-		var data = JSON.parse(request.response);
-		console.log(data);
-		// TODO: Process data.
-
-		var sr = document.getElementById("screenReader");
-		sr.innerHTML = "<table>";
-		sr.innerHTML +="<tr><td>Country</td><td>Bias</td><td>Yield</td></tr>";
-		for(c in data.Opinions)
-		{
-			sr.innerHTML += "<tr><td>"+c.Country+"</td><td>"+c.Opinion.Bias+"</td><td>"+c.Opinion.Yield+"</td></tr>";
-		}
-		sr.innerHTML += "</table>";
+		parseJSONData(request.response);
 	}.bind(this);
 	
 	request.send();
@@ -201,7 +225,7 @@ function parseSvg(content, countryCode)
 		if(countryCode === undefined || code == countryCode)
 		{
 			var polygons = parsePath(paths[p].getAttribute("d"));
-			var country = new Country(polygons, (Math.random()*2) - 1);
+			var country = new Country(polygons, 0);
 			country.calculateCenter();
 			country.setName(code, paths[p].getAttribute("title"));
 			countries[code] = country;
