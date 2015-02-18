@@ -86,8 +86,8 @@ function displayElementModally(element) {
 	if(!modalElementPresent) {
 		modalFreezeFrame.fadeIn(function () {
 			centreElement(element);
-			body.css('overflow', 'hidden'); // Lock body from scrolling.
-			element.css({'z-index': '1', 'box-shadow': '0px 0px 5px #007C9E'}).fadeIn(function () {
+			body.css('overflow', 'hidden'); // Lock body, disallow scrolling.
+			element.css({'z-index': 1, 'box-shadow': '0px 0px 5px #007C9E'}).fadeIn(function () {
 				modalElementPresent = true;
 				modalElement = element;
 			});
