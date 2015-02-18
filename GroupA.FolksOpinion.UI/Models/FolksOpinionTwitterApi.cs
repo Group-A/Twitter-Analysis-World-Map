@@ -1,6 +1,6 @@
 ﻿/* File:        FolksOpinionTwitterapi.cs
  * Purpose:     Specialised TwitterApi class for the FolksOpinion application.
- * Version:     1.2
+ * Version:     1.3
  * Created:     9th February 2015
  * Author:      Gary Fernie
  * Exposes:     FolksOpinionTwitterApi
@@ -15,6 +15,9 @@
  *              17th February 2015, 1.2
  *              - Changed GetTweets method to better handle responses.
  *              - Config bug seems resolved.
+ *              18th February 2015, 1.3
+ *              - Added functionality to perform multiple consecutive
+ *                  searches to amass more subject Tweets.
  */
 
 using Newtonsoft.Json;
@@ -25,6 +28,9 @@ namespace GroupA.FolksOpinion.UI.Models
 {
     public class FolksOpinionTwitterApi : TwitterApi
     {
+        private static int numTweetsToRetrieve = 100; // Tweets per request.
+        private static int numRequestsToPerform = 10; // Requests per subject.
+        
         public FolksOpinionTwitterApi()
         {
             var keysLoaded = LoadKeysFromConfig();
@@ -37,17 +43,28 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Returns a colection of Tweets matching a search term. */
+        // TODO: Refactor this mess.
         public IEnumerable<Tweet> GetTweets (string searchTerm)
         {
+            var tweets = new List<Tweet>();
+            
             var tweetsJson = GetTweetsJson(searchTerm);
             if (tweetsJson != null)
                 if (!tweetsJson.Equals(""))
                 {
                     var tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
-                    return tweetSearchResponse.statuses;
+                    tweets.AddRange(tweetSearchResponse.statuses);
+
+                    for (var i=1; i<numRequestsToPerform; i++)
+                    {
+                        tweetsJson = GetApiResource("/1.1/search/tweets.json"
+                            + tweetSearchResponse.search_metadata.next_results);
+                        tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
+                        tweets.AddRange(tweetSearchResponse.statuses);
+                    }
                 }
             
-            return new List<Tweet>();;
+            return tweets;
         }
 
         /* Loads keys from config file.
