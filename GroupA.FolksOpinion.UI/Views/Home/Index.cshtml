@@ -3,10 +3,12 @@
 }
 
 @Scripts.Render("~/Scripts/WorldMap.js")
+@Scripts.Render("~/Scripts/map.js")
+
 @Styles.Render("~/Content/WorldMap.css")
 
 <div id="mapContainer">
-    <img src="~/Content/Images/placeholderMap.png" alt="World Map" />
+    <canvas id="map"></canvas>
 </div>
 
 <div id="hashtagSelectionSidebar">

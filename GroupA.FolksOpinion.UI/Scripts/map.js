@@ -53,7 +53,7 @@ window.onload = function()
 		makeElementFillWindow(canvas);
 	}.bind(this);
 	
-	loadSvg("worldLow.svg", function(content){
+	loadSvg("Content/worldLow.svg", function (content) {
 		parseSvg(content);
 		parseJSONData("{\"Subject\":\"Abertay\",\"CountryOpinions\":[{\"Country\":\"AU\",\"Opinion\":{\"PositiveBias\":0.1,\"NegativeBias\":0.0}},{\"Country\":\"GB\",\"Opinion\":{\"PositiveBias\":0.028571428571428574,\"NegativeBias\":0.014285714285714287}}]}");
 	
