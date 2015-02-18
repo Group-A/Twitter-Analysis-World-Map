@@ -1,0 +1,145 @@
+/* Main Body Style */
+body {
+	margin:                                0px;
+	background:                            radial-gradient(#00B7EA, #009EC3);
+	font-family:                           Arial, sans-serif;
+	font-size:                             20px;
+	color:                                 #FFF;
+	text-shadow:                           0px 1px 0px #007C9E;
+}
+
+ol, ul, li {
+	margin:                                0px;
+	padding:                               0px;
+	list-style:                            none;
+}
+
+/* Hashtag Selection Sidebar */
+#hashtagSelectionSidebar {
+	padding:                               45px;
+	width:                                 300px;
+	background:                            rgba(0, 143, 183, 0.8);
+	position:                              absolute;
+	top:                                   0px;
+	left:                                  0px;
+	overflow-y:                            auto;
+}
+
+#hashtagSelectionSidebar h1 {
+	margin:                                0px;
+	font-size:                             32px;
+	text-transform:                        uppercase;
+}
+
+#hashtagSelectionSidebar #separator {
+	margin:                                5px 0px 0px 0px;
+	width:                                 140px;
+	height:                                6px;
+	background:                            #FFF;
+	box-shadow:                            0px 1px 0px #007C9E;
+}
+
+#hashtagSelectionSidebar h2 {
+	margin:                                25px 0px 0px 0px;
+	font-size:                             inherit;
+	font-weight:                           normal;
+	line-height:                           28px;
+}
+
+#hashtagSelectionSidebar #hashtags {
+	margin:                                25px 0px 0px 0px;
+	padding:                               0px 0px 15px 0px;
+	counter-reset:                         hashtagCounter;
+	border-bottom:                         1px dotted rgba(255, 255, 255, 0.3);
+}
+
+#hashtagSelectionSidebar #hashtags li:before {
+	content:                               "#" counter(hashtagCounter);
+	counter-increment:                     hashtagCounter;
+	float:                                 left;
+}
+
+#hashtagSelectionSidebar #hashtags li {
+	margin:                                15px 0px 0px 0px;
+	padding:                               15px 0px 0px 0px;
+	text-align:                            right;
+	border-top:                            1px dotted rgba(255, 255, 255, 0.3);
+	cursor:                                pointer;
+}
+
+#hashtagSelectionSidebar #modalLinks {
+	width:                                 300px;
+	position:                              absolute;
+	left:                                  45px;
+	bottom:                                45px;
+	font-size:                             12px;
+}
+
+#hashtagSelectionSidebar #modalLinks li {
+	display:                               inline;
+	cursor:                                pointer;
+}
+
+#hashtagSelectionSidebar #modalLinks li:last-child {
+	float:                                 right;
+}
+
+#hashtagSelectionSidebar #closeHashtagSelectionSidebarButton {
+	position:                              absolute;
+	top:                                   70px;
+	right:                                 45px;
+	opacity:                               0.9;
+}
+
+#hashtagSelectionSidebar #closeHashtagSelectionSidebarButton:hover {
+	opacity:                               1;
+	cursor:                                pointer;
+}
+
+/* Open Hashtag Selection Sidebar Button */
+#openHashtagSelectionSidebarButton {
+	position:                              absolute;
+	top:                                   45px;
+	left:                                  45px;
+	opacity:                               0.9;
+	display:                               none;
+
+}
+
+#openHashtagSelectionSidebarButton:hover {
+	opacity:                               1;
+	cursor:                                pointer;
+}
+
+/* Options Button */
+#optionsButton {
+	position:                              absolute;
+	top:                                   45px;
+	right:                                 45px;
+	opacity:                               0.9;
+
+}
+
+#optionsButton:hover {
+	opacity:                               1;
+	cursor:                                pointer;
+}
+
+/* Modal Freeze Frame */
+#modalFreezeFrame {
+	width:                                 100%;
+	height:                                100%;
+	background:                            rgba(255, 255, 255, 0.6);
+	position:                              absolute;
+	top:                                   0px;
+	left:                                  0px;
+	display:                               none;
+}
+
+/* Placeholder Modal Boxes */
+#aboutModalBox, #helpModalBox, #optionsModalBox {
+	width:                                 600px;
+	height:                                300px;
+	background:                            #FFF;
+	display:                               none;
+}
