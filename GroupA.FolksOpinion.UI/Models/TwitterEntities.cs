@@ -1,6 +1,6 @@
 ﻿/* File:        TwitterEntities.cs
  * Purpose:     Represents the various entities in Twitter.
- * Version:     2.0
+ * Version:     2.1
  * Created:     10th February 2015
  * Author:      Gary Fernie
  * Exposes:     Tweet, Place, GetSearchTweetsResponse
@@ -12,6 +12,8 @@
  *                
  * Changes:     17th February 2015, 2.0
  *              - File now also models API responses.
+ *              18th February 2015, 2.1
+ *              - Small changes to cooperate with Entity Framework.
  */
 
 using System.Collections.Generic;
@@ -25,7 +27,7 @@ namespace GroupA.FolksOpinion.UI.Models
     {
         public string id_str { get; set; }
         public string lang { get; set; }
-        public Place place { get; set; }
+        public virtual Place place { get; set; }
         public string text { get; set; }
     }
 
@@ -43,8 +45,8 @@ namespace GroupA.FolksOpinion.UI.Models
      */
     public class GetSearchTweetsResponse
     {
-        public IEnumerable<Tweet> statuses { get; set; }
-        public SearchMetadata search_metadata { get; set; }
+        public virtual ICollection<Tweet> statuses { get; set; }
+        public virtual SearchMetadata search_metadata { get; set; }
 
         public class SearchMetadata
         {

@@ -10,11 +10,8 @@
  *              - Organises tweets into countries.
  */
 
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
@@ -35,7 +32,7 @@ namespace GroupA.FolksOpinion.UI.Models
             {
                 Subject = subject,
                 CountryOpinions = 
-                    OpinionateCountries(OpinionateTweets(GetTweets(subject)))
+                    new List<CountryOpinion>(OpinionateCountries(OpinionateTweets(GetTweets(subject))))
             };
         }
 
