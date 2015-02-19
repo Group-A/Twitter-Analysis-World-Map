@@ -1,9 +1,8 @@
 ﻿/* File:        TwitterApi.cs
  * Purpose:     Provides functionality to issue application-only
  *              Oauth2 requests to the Twitter API.
- * Version:     1.2
+ * Version:     1.3
  * Created:     3rd February 2015
- * Modified:    9th February 2015
  * Author:      Gary Fernie
  * Exposes:     TwitterApi, BearerTokenNotGrantedException
  * 
@@ -16,6 +15,8 @@
  *              - Removed application-specific code (generalised class).
  *              17th February 2015, ver 1.2
  *              - Added GetTweets method.
+ *              18th February 2015, var 1.3
+ *              - Added more error checking to GetTweetsJson method.
  */
 
 using Newtonsoft.Json;
@@ -147,10 +148,16 @@ namespace GroupA.FolksOpinion.UI.Models
         /* Uses GetApiResource to get specifically Tweets matching a search term */
         public string GetTweetsJson(string searchTerm)
         {
+            // Get resource and validate.
             var tweets = GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
+            if (tweets == null) return "";
+            if (tweets.Equals("")) return "";
+
+            // Check for errors and return results.
             dynamic tweetsObject = JObject.Parse(tweets);
             if (tweetsObject.errors == null)
                 return tweets;
+
             else return "";
         }
 
