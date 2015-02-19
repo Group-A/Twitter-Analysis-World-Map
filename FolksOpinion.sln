@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolksOpinion.UI", "GroupA.FolksOpinion.UI\FolksOpinion.UI.csproj", "{516C2B74-0AF5-4B0C-83BE-B18F124D7F0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupA.FolksOpinion.UI", "GroupA.FolksOpinion.UI\GroupA.FolksOpinion.UI.csproj", "{516C2B74-0AF5-4B0C-83BE-B18F124D7F0A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroupA.FolksOpinion.UI.UnitTests", "GroupA.FolksOpinion.UI.UnitTests\GroupA.FolksOpinion.UI.UnitTests.csproj", "{B72D5FA7-28F2-4A5B-BAB6-26BD73F72C7D}"
 EndProject

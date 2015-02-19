@@ -39,6 +39,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data">
       <HintPath>..\packages\MySql.Data.6.9.5\lib\net45\MySql.Data.dll</HintPath>
@@ -140,6 +146,7 @@
     <Content Include="App_Data\Dictionary\en_README.txt" />
     <Content Include="Content\Images\closeHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\openHashtagSelectionSidebarButton.png" />
+    <Content Include="Content\Images\optionsButton.png" />
     <Content Include="Content\Images\placeholderMap.png" />
     <Content Include="Content\WorldMap.css" />
     <Content Include="favicon.ico" />
@@ -148,6 +155,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\jQuery.js" />
     <Content Include="Scripts\map.js" />
+    <Content Include="Scripts\ui.js" />
     <Content Include="Scripts\WorldMap.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
@@ -173,6 +181,7 @@
     <Content Include="packages.config" />
     <Content Include="Content\worldLow.svg" />
     <None Include="Project_Readme.html" />
+    <None Include="Properties\PublishProfiles\Local File System.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
