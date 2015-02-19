@@ -55,9 +55,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GroupA.FolksOpinion.UI\FolksOpinion.UI.csproj">
+    <ProjectReference Include="..\GroupA.FolksOpinion.UI\GroupA.FolksOpinion.UI.csproj">
       <Project>{516c2b74-0af5-4b0c-83be-b18f124d7f0a}</Project>
-      <Name>FolksOpinion.UI</Name>
+      <Name>GroupA.FolksOpinion.UI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
