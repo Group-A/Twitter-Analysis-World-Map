@@ -1,7 +1,7 @@
 ﻿/* File:        CumulativeBiasAnalyser.cs
  *              (previously known as "Analyser.cs")
  * Purpose:     Analyses a string for opinion.
- * Version:     1.3
+ * Version:     1.4
  * Created:     
  * Author:      Michael Rodenhurst
  * Exposes:     CumulativeBiasAnalyser
@@ -87,10 +87,12 @@ namespace GroupA.FolksOpinion.UI.Models
             int negative_words = 0;
             for (int i = 0; i < words.Length; i++) // For each word
             {
+                String word = words[i].ToLower();
+
                 /* Iterate over each word in the positive and negative dictionary and match it */
                 for (int j = 0; j < dictionary_positive.Length; j++)
                 {
-                    if(dictionary_positive[j] == words[i])
+                    if(dictionary_positive[j].ToLower() == word)
                     {
                         positive_words++;
                         break;
@@ -99,7 +101,7 @@ namespace GroupA.FolksOpinion.UI.Models
 
                 for (int j = 0; j < dictionary_negative.Length; j++)
                 {
-                    if (dictionary_negative[j] == words[i])
+                    if (dictionary_negative[j].ToLower() == word)
                     {
                         negative_words++;
                         break;
