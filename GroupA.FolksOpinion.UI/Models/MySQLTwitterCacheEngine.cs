@@ -136,6 +136,7 @@ namespace GroupA.FolksOpinion.UI.Models
             string createTweetTable = "CREATE TABLE " + typeof(Tweet).Name+" (";
             string createPlaceTable = "CREATE TABLE " + typeof(Place).Name +" (";
             string createOpinionTable = "CREATE TABLE " + typeof(Opinion).Name+" (";
+            string createTweetOpinionTable = "CREATE TABLE" + typeof(TweetOpinion).Name + " (";
             foreach(var rootProperty in TWProp)
             {
                 foreach(var tweetPro in tweetProp)
@@ -181,13 +182,22 @@ namespace GroupA.FolksOpinion.UI.Models
                         
                     }
                 }
+                if(TWProp.Length>1)
+                {
+                    createTweetOpinionTable += "" + rootProperty.Name + " " + TWProp.Length + ",";
+                }
+                else
+                {
+                    createTweetOpinionTable += "" + rootProperty.Name + " " + TWProp.Length + "";
+                }
             }
             createTweetTable += ");";
             createPlaceTable += ");";
             createOpinionTable += ");";
-            if (createTweetTable != null && createPlaceTable != null && createOpinionTable != null)
+            createTweetOpinionTable += ");";
+            if (createTweetTable != null && createPlaceTable != null && createOpinionTable != null && createTweetOpinionTable!=null)
             {
-                sql.SendQuery(createTweetTable + createPlaceTable + createOpinionTable);
+                sql.SendQuery(createTweetTable + createPlaceTable + createOpinionTable + createTweetOpinionTable);
                 return true;
             }
             return false;
