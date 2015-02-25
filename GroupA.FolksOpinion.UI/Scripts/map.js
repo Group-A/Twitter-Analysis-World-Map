@@ -111,6 +111,14 @@ function parseJSONData(string)
 	sr.innerHTML += "</table>";*/
 }
 
+function SearchbtnonClick()
+{
+	var topic = document.getElementById("searchTwi").value;
+	if(topic.length>0)
+	{
+		requestTopic(topic);
+	}
+}
 
 
 function requestTopic(topic)

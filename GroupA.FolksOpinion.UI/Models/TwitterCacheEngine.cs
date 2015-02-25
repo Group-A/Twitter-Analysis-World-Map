@@ -31,7 +31,7 @@ namespace GroupA.FolksOpinion.UI.Models
 
         protected ObjectCache cache = MemoryCache.Default;
 
-        public abstract void CacheTweet(Tweet tweet);
+        public abstract void CacheTweet(TweetOpinion tweet);
 
         public abstract void UncacheTweet(String id);
 
