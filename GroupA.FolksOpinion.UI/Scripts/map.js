@@ -124,11 +124,10 @@ function SearchbtnonClick()
 function requestTopic(topic)
 {
 	// TODO: Encode topic correctly.
-	var url = document.location.host + "/Data/Opinion?q=" + topic;
+	var url = "/Data/Opinion?q=" + topic;
 	var request = newRequest();
 	
 	request.open("GET", url, true);
-	request.setRequestHeader("X-PINGOTHER", "pingpong");
 	request.setRequestHeader("Content-Type", "application/json");
 	request.withCredentials = true;
 	
