@@ -11,6 +11,8 @@
 */
 
 var ctx, canvas;
+var mapCanvas, mapCtx;
+
 var countries = {};
 var negativeColor, neutralColor, positiveColor, backgroundColor;
 
@@ -24,7 +26,7 @@ var mouseState = {
 }
 
 var mapPosition = {
-	zoom : 0.9,
+	zoom : 0.2,
 	x : 0,
 	y : 0
 }
@@ -46,18 +48,26 @@ window.onload = function()
 	mouseState.delta = new MouseState();
 
 	canvas = document.getElementById("map");
+	canvas.width = mapWidth;
+	canvas.height = mapHeight;
 	ctx = canvas.getContext("2d");
+	
+	mapCanvas = document.createElement("canvas");
+	mapCanvas.width = mapWidth*4;
+	mapCanvas.height = mapHeight*4;
+	mapCtx = mapCanvas.getContext("2d");
 	
 	window.onresize = function()
 	{
 		makeElementFillWindow(canvas);
 	}.bind(this);
 	
-	loadSvg("Content/worldLow.svg", function (content) {
+	loadSvg("Content/worldLow.svg", function(content){
 		parseSvg(content);
 		parseJSONData("{\"Subject\":\"Abertay\",\"CountryOpinions\":[{\"Country\":\"AU\",\"Opinion\":{\"PositiveBias\":0.1,\"NegativeBias\":0.0}},{\"Country\":\"GB\",\"Opinion\":{\"PositiveBias\":0.028571428571428574,\"NegativeBias\":0.014285714285714287}}]}");
 	
 		makeElementFillWindow(canvas);
+		renderMap()
 	});
 	
 	initKeyListeners(canvas);
@@ -65,7 +75,10 @@ window.onload = function()
 	window.requestAnimationFrame(loop);
 }
 
-
+function renderMap()
+{
+	drawRawMap(mapCanvas, mapCtx);
+}
 
 function parseJSONData(string)
 {
@@ -111,6 +124,7 @@ function requestTopic(topic)
 	request.onload = function(e)
 	{
 		parseJSONData(request.response);
+		renderMap();
 	}.bind(this);
 	
 	request.send();
@@ -128,15 +142,27 @@ function loop()
 	}
 	
 	// TODO: Make the zoom relative to prevent dumb zooming.
-	mapPosition.zoom -= (mouseState.current.wheelPosition - mouseState.last.wheelPosition)/10;
-	if(mapPosition.zoom < 0.8)
-		mapPosition.zoom = 0.8;
+	mapPosition.zoom -= (mouseState.current.wheelPosition - mouseState.last.wheelPosition)/50;
+	if(mapPosition.zoom < 0.1)
+		mapPosition.zoom = 0.1;
 	
-	makeElementFillWindow(canvas);
+	//makeElementFillWindow(canvas);
 	
 	mouseState.last.x = mouseState.current.x;
 	mouseState.last.y = mouseState.current.y;
 	mouseState.last.wheelPosition = mouseState.current.wheelPosition;
+	
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	
+	ctx.save();
+	ctx.translate(canvas.width/2, canvas.height/2);
+	ctx.scale(mapPosition.zoom, mapPosition.zoom);
+	ctx.translate(-canvas.width/2, -canvas.height/2);
+	ctx.translate(mapPosition.x, mapPosition.y);
+	
+	ctx.drawImage(mapCanvas, 0, 0);
+	
+	ctx.restore();
 }
 
 function initKeyListeners(element)
@@ -177,14 +203,14 @@ function initKeyListeners(element)
 	}
 	
 	element.addEventListener("DOMMouseScroll", mouseWheelFunction);
-	element.addEventListener("mousescroll", mouseWheelFunction);
+	element.addEventListener("mousewheel", mouseWheelFunction);
 }
 
 function makeElementFillWindow(element)
 {
 	element.width = window.innerWidth;
 	element.height = window.innerHeight;
-	drawMap();
+	//drawMap();
 }
 
 function newRequest()
@@ -344,7 +370,7 @@ function parseInstruction(data, index, position)
 	return result;
 }
 
-function drawCountry(country)
+function drawCountry(ctx, country)
 {
 	var polygons = country.polygons;
 	var attitude = country.attitude;
@@ -389,6 +415,26 @@ function drawCountry(country)
 		ctx.stroke();
 		ctx.restore();
 	}
+}
+
+function drawRawMap(canvas, ctx)
+{
+	var hScale = canvas.width/mapWidth,
+		vScale = canvas.height/mapHeight
+		
+	var scale = Math.min(hScale, vScale);
+
+	ctx.scale(scale, scale);
+	
+	if(hScale > vScale)
+		ctx.translate(((canvas.width - (mapWidth * scale)) * 0.5) / scale, 0);
+	else
+		ctx.translate(0, ((canvas.height - (mapHeight * scale)) * 0.5) / scale);
+	
+	for(var c in countries)
+		drawCountry(ctx, countries[c]);
+	
+	ctx.restore();
 }
 
 function drawMap()
