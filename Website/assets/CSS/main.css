@@ -1,7 +1,7 @@
 /* Main Body Style */
 body {
 	margin:                                0px;
-	background:                            radial-gradient(#00B7EA, #009EC3);
+	background:                            #009EC3;
 	font-family:                           Arial, sans-serif;
 	font-size:                             20px;
 	color:                                 #FFF;
@@ -168,4 +168,22 @@ h1, h2 {
 	color:                                 #888;
 	text-align:                            justify;
 	line-height:                           28px;
+}
+
+/* Options Modal Box */
+#optionsModalBox .colourScheme {
+	margin:                                25px 0px 0px 0px;
+	overflow:                              auto;
+	cursor:                                pointer;
+}
+
+#optionsModalBox .colourScheme .colourBlock {
+	padding:                               35px 5px 5px 5px;
+	width:                                 189px;
+	text-align:                            right;
+	font-size:                             12px;
+	font-weight:                           bold;
+	color:                                 #FFF;
+	float:                                 left;
+	border-right:                          1px solid #FFF;
 }
