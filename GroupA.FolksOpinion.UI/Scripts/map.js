@@ -27,8 +27,8 @@ var mouseState = {
 
 var mapPosition = {
 	zoom : 0.2,
-	x : 0,
-	y : 0
+	x : -800,
+	y : -800
 }
 
 window.onload = function()
@@ -120,6 +120,9 @@ function requestTopic(topic)
 	var request = newRequest();
 	
 	request.open("GET", url, true);
+	request.setRequestHeader("X-PINGOTHER", "pingpong");
+	request.setRequestHeader("Content-Type", "application/json");
+	request.withCredentials = true;
 	
 	request.onload = function(e)
 	{
