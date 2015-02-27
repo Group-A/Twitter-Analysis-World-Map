@@ -119,7 +119,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ILexicalBiasAnalyser.cs" />
     <Compile Include="Models\MySQLInterface.cs" />
     <Compile Include="Models\MySQLTwitterCacheEngine.cs" />

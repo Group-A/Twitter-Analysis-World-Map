@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -39,10 +40,10 @@ namespace GroupA.FolksOpinion.UI.Models
         public MySQLTwitterCacheEngine()
         {
             /* Get SQL config variables */
-            String host = Config.GetVariable("mysql_cache_host");
-            String database = Config.GetVariable("mysql_cache_database");
-            String user = Config.GetVariable("mysql_cache_user");
-            String password = Config.GetVariable("mysql_cache_password");
+            String host = ConfigurationManager.AppSettings["mysql_cache_host"];
+            String database = ConfigurationManager.AppSettings["mysql_cache_database"];
+            String user = ConfigurationManager.AppSettings["mysql_cache_user"];
+            String password = ConfigurationManager.AppSettings["mysql_cache_password"];
 
             /* Initialise SQL interface */
             sql = new MySQLInterface(host, database, user, password);
