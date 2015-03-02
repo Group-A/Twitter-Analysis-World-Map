@@ -140,16 +140,17 @@
     <Content Include="Content\Images\closeHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\openHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\placeholderMap.png" />
-    <Content Include="Content\WorldMap.css" />
+    <Content Include="Content\main.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
     <Content Include="Scripts\jQuery.js" />
+    <Content Include="Scripts\main.js" />
     <Content Include="Scripts\map.js" />
-    <Content Include="Scripts\WorldMap.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
