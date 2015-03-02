@@ -1,7 +1,7 @@
 ﻿/* File:        TwitterApi.cs
  * Purpose:     Provides functionality to issue application-only
  *              Oauth2 requests to the Twitter API.
- * Version:     1.3
+ * Version:     1.4
  * Created:     3rd February 2015
  * Author:      Gary Fernie
  * Exposes:     TwitterApi, BearerTokenNotGrantedException
@@ -15,14 +15,19 @@
  *              - Removed application-specific code (generalised class).
  *              17th February 2015, ver 1.2
  *              - Added GetTweets method.
- *              18th February 2015, var 1.3
+ *              18th February 2015, ver 1.3
  *              - Added more error checking to GetTweetsJson method.
+ *              2nd March 2015, ver 1.4
+ *              - Separated API requests and response error checking.
+ *              - Added GET trends/place functionality.
+ *              - Added response cache.
  */
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Net.Http;
+using System.Runtime.Caching;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Web;
@@ -45,7 +50,10 @@ namespace GroupA.FolksOpinion.UI.Models
         private static string bearerTokenHeaderContentType = "application/x-www-form-urlencoded";
         private static string bearerTokenRequestBody = "grant_type=client_credentials";
 
-        public TwitterApi() { }
+        // Memory cache for caching responses.
+        private static ObjectCache cache = MemoryCache.Default;
+
+        protected TwitterApi() { }
         
         public TwitterApi(string consumerKey, string consumerSecret)
         {
@@ -119,7 +127,7 @@ namespace GroupA.FolksOpinion.UI.Models
          * Resouce e.g.: "/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi"
          * Gets: https://api.twitter.com/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi
          */
-        public static string GetApiResource(string bearerToken, string resource)
+        public static string MakeApiGetRequest(string bearerToken, string resource)
         {
             string response = "";
             if (bearerToken == null) return response;
@@ -140,25 +148,51 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Uses this object's token. */
-        public string GetApiResource(string resource)
+        public string MakeApiGetRequest(string resource)
         {
-            return GetApiResource(bearerToken, resource);
+            return MakeApiGetRequest(bearerToken, resource);
         }
 
-        /* Uses GetApiResource to get specifically Tweets matching a search term */
-        public string GetTweetsJson(string searchTerm)
+        /* Make request to Twitter API for supplied resource.
+         * Returns Json response.
+         * Uses MakeApiGetRequest.
+         * Validates response, returns empty string if invalid or error.
+         */
+        public string GetApiResource(string resource)
         {
             // Get resource and validate.
-            var tweets = GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
-            if (tweets == null) return "";
-            if (tweets.Equals("")) return "";
+            var response = MakeApiGetRequest(resource);
+            if (response == null) return "";
+            if (response.Equals("")) return "";
 
             // Check for errors and return results.
-            dynamic tweetsObject = JObject.Parse(tweets);
-            if (tweetsObject.errors == null)
-                return tweets;
-
+            dynamic responseObject = JObject.Parse(response);
+            if (responseObject.errors == null)
+                return response;
             else return "";
+        }
+
+        /* Gets Tweets matching a search term, using GetApiResource. */
+        public string GetTweetsJson(string searchTerm)
+        {
+            return GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
+        }
+
+        /* Gets trends for a WOEID (location).
+         * https://dev.twitter.com/rest/reference/get/trends/place
+         * WEOID: http://zourbuth.com/tools/woeid/
+         */
+        public string GetTrendsForPlaceJson(int woeid)
+        {
+            return GetApiResource("/1.1/trends/place.json?id=" + woeid);
+        }
+
+        /* Gets global trends.
+         * WOEID: 1 (global)
+         */
+        public string GetTrendsGlobalJson()
+        {
+            return GetTrendsForPlaceJson(1);
         }
 
         /* Checks if keys are null or empty.
