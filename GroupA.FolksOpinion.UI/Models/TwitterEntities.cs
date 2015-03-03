@@ -55,7 +55,7 @@ namespace GroupA.FolksOpinion.UI.Models
     /* Twitter response: POST /oauth2/token
      * https://dev.twitter.com/oauth/application-only
      */
-    private class TwitterBearerTokenResponse
+    public class TwitterBearerTokenResponse
     {
         public string token_type { get; set; }
         public string access_token { get; set; }

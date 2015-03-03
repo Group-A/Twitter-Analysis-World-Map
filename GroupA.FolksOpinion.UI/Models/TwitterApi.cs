@@ -1,7 +1,7 @@
 ﻿/* File:        TwitterApi.cs
  * Purpose:     Provides functionality to issue application-only
  *              Oauth2 requests to the Twitter API.
- * Version:     1.4
+ * Version:     1.4.1
  * Created:     3rd February 2015
  * Author:      Gary Fernie
  * Exposes:     TwitterApi, BearerTokenNotGrantedException
@@ -23,6 +23,8 @@
  *              - Added response caching.
  *              - Validation improvements.
  *              - Moved TwitterBearerTokenResponse to TwitterEntities.cs.
+ *              3rd March 2015, ver 1.4.1
+ *              - Improved caching functionality.
  */
 
 using Newtonsoft.Json;
@@ -53,8 +55,9 @@ namespace GroupA.FolksOpinion.UI.Models
         private static string bearerTokenRequestBody = "grant_type=client_credentials";
 
         // Memory cache for caching responses.
-        private static Cache cache = new Cache();
-        private static double cacheExpiryMins = 5d; // Mins until cached items expire.
+        private static Cache responseCache = new Cache();
+        private static double responseCacheExpiryMinsDefault = 3d; // Mins until cached items expire.
+        private static double trendsResponseCacheExpiryMinsDefault = 5d;
 
         protected TwitterApi() { }
         
@@ -159,15 +162,16 @@ namespace GroupA.FolksOpinion.UI.Models
 
         /* Make request to Twitter API for supplied resource.
          * Returns Json response.
-         * Uses caching.
+         * Uses caching - disabled by default.
          * Uses MakeApiGetRequest.
          * Validates response, returns empty string if invalid or error.
          */
-        public string GetApiResource(string resource)
+        public string GetApiResource(string resource, bool cache = false, double cacheExpiryMins = 0)
         {
             // Check cache.
-            if (cache[resource] != null)
-                return (string) cache[resource];
+            if (cache)
+                if (responseCache[resource] != null)
+                    return (string) responseCache[resource];
             
             // Get resource and validate.
             var response = MakeApiGetRequest(resource);
@@ -179,12 +183,14 @@ namespace GroupA.FolksOpinion.UI.Models
                 return "";
 
             // Cache response.
-            cache.Insert(
-                key: resource, 
-                value: response, 
-                absoluteExpiration: DateTime.Now.AddMinutes(cacheExpiryMins), 
-                dependencies: null, 
-                slidingExpiration: Cache.NoSlidingExpiration);
+            if (cache)
+                responseCache.Insert(
+                    key: resource, 
+                    value: response, 
+                    absoluteExpiration: DateTime.Now.AddMinutes(
+                        cacheExpiryMins != 0 ? cacheExpiryMins : responseCacheExpiryMinsDefault), 
+                    dependencies: null, 
+                    slidingExpiration: Cache.NoSlidingExpiration);
 
             return response;
             
@@ -202,7 +208,10 @@ namespace GroupA.FolksOpinion.UI.Models
          */
         public string GetTrendsJson(int woeid)
         {
-            return GetApiResource("/1.1/trends/place.json?id=" + woeid);
+            return GetApiResource(
+                resource: "/1.1/trends/place.json?id=" + woeid, 
+                cache: true, 
+                cacheExpiryMins: trendsResponseCacheExpiryMinsDefault);
         }
 
         /* Gets global trends.
