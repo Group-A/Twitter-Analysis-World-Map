@@ -62,9 +62,9 @@ namespace GroupA.FolksOpinion.UI.Models
             place += ");";
             tweetO += ");";
             opinion += ");";
-            sql.SendQuery(tweetO);
-            sql.SendQuery(place);
-            sql.SendQuery(opinion);
+            //sql.SendQuery(tweetO);
+            //sql.SendQuery(place);
+            //sql.SendQuery(opinion);
         }
 
         public override void UncacheTweet(String id)
@@ -94,9 +94,9 @@ namespace GroupA.FolksOpinion.UI.Models
                 }
             }
 
-            sql.SendQuery(deleteTweet);
-            sql.SendQuery(deletePlace);
-            sql.SendQuery(deleteOpinion);
+            //sql.SendQuery(deleteTweet);
+            //sql.SendQuery(deletePlace);
+            //sql.SendQuery(deleteOpinion);
         }
 
         public override TweetOpinion GetTweet(String id)
@@ -112,24 +112,24 @@ namespace GroupA.FolksOpinion.UI.Models
                 {
                     if(prop.Name.Contains("subject"))
                     {
-                        sql.SendQuery("SELECT * FROM " + typeof(Tweet).Name + " WHERE " + prop.Name + " = " + subject + ";");
+                        //sql.SendQuery("SELECT * FROM " + typeof(Tweet).Name + " WHERE " + prop.Name + " = " + subject + ";");
                     }
                 }
             }
             else
             {
-                sql.SendQuery("SELECT * FROM " + typeof(Tweet).Name + ";");
-                sql.SendQuery("SELECT * FROM " + typeof(Place).Name + ";");
-                sql.SendQuery("SELECT * FROM " + typeof(Opinion).Name + ";");
+                //sql.SendQuery("SELECT * FROM " + typeof(Tweet).Name + ";");
+                //sql.SendQuery("SELECT * FROM " + typeof(Place).Name + ";");
+                //sql.SendQuery("SELECT * FROM " + typeof(Opinion).Name + ";");
             }
             return new CacheResult();
         }
 
         public override void FlushCache() // Clears the cache
         {
-            sql.SendQuery("TRUNCATE TABLE " + typeof(Tweet).Name + "");
-            sql.SendQuery("TRUNCATE TABLE " + typeof(Place).Name + "");
-            sql.SendQuery("TRUNCATE TABLE " + typeof(Opinion).Name + "");
+            //sql.SendQuery("TRUNCATE TABLE " + typeof(Tweet).Name + "");
+            //sql.SendQuery("TRUNCATE TABLE " + typeof(Place).Name + "");
+            //sql.SendQuery("TRUNCATE TABLE " + typeof(Opinion).Name + "");
         }
 
         private bool CreateTableStructure()
@@ -198,7 +198,7 @@ namespace GroupA.FolksOpinion.UI.Models
             createTweetOpinionTable += ");";
             if (createTweetTable != null && createPlaceTable != null && createOpinionTable != null && createTweetOpinionTable!=null)
             {
-                sql.SendQuery(createTweetTable + createPlaceTable + createOpinionTable + createTweetOpinionTable);
+                //sql.SendQuery(createTweetTable + createPlaceTable + createOpinionTable + createTweetOpinionTable);
                 return true;
             }
             return false;
