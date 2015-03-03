@@ -1,6 +1,6 @@
 ﻿/* File:        FolksOpinionTwitterapi.cs
  * Purpose:     Specialised TwitterApi class for the FolksOpinion application.
- * Version:     1.3
+ * Version:     1.4
  * Created:     9th February 2015
  * Author:      Gary Fernie
  * Exposes:     FolksOpinionTwitterApi
@@ -10,14 +10,17 @@
  *              - Loads keys from application config file.
  *              - Makes key obfuscation checks.
  *              
- * Changes:     17th February 2015, 1.1
+ * Changes:     17th February 2015, ver 1.1
  *              - Added GetTweets method.
- *              17th February 2015, 1.2
+ *              17th February 2015, ver 1.2
  *              - Changed GetTweets method to better handle responses.
  *              - Config bug seems resolved.
- *              18th February 2015, 1.3
+ *              18th February 2015, ver 1.3
  *              - Added functionality to perform multiple consecutive
  *                  searches to amass more subject Tweets.
+ *              3rd March 2015, ver 1.4
+ *              - Validation improvements.
+ *              - Get trends functionality.
  */
 
 using Newtonsoft.Json;
@@ -44,29 +47,51 @@ namespace GroupA.FolksOpinion.UI.Models
 
         /* Returns a colection of Tweets matching a search term. */
         // TODO: Refactor this mess.
-        public IEnumerable<Tweet> GetTweets (string searchTerm)
+        public IEnumerable<Tweet> GetTweets(string searchTerm)
         {
             var tweets = new List<Tweet>();
-            
             var tweetsJson = GetTweetsJson(searchTerm);
-            if (tweetsJson != null)
-                if (!tweetsJson.Equals(""))
-                {
-                    var tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
-                    tweets.AddRange(tweetSearchResponse.statuses);
 
-                    for (var i=1; i<numRequestsToPerform; i++)
-                    {
-                        tweetsJson = GetApiResource("/1.1/search/tweets.json"
-                            + tweetSearchResponse.search_metadata.next_results);
-                        tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
-                        try { tweets.AddRange(tweetSearchResponse.statuses); }
-                        catch (System.ArgumentNullException) { break; }
+            if (!string.IsNullOrEmpty(tweetsJson))
+            {
+                var tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
+                tweets.AddRange(tweetSearchResponse.statuses);
+
+                for (var i=1; i<numRequestsToPerform; i++)
+                {
+                    tweetsJson = GetApiResource("/1.1/search/tweets.json"
+                        + tweetSearchResponse.search_metadata.next_results);
+                    tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
+                    try { tweets.AddRange(tweetSearchResponse.statuses); }
+                    catch (System.ArgumentNullException) { break; }
                         
-                    }
                 }
+            }
             
             return tweets;
+        }
+
+        /* Returns a collection of trending topics for a given place. */
+        public IEnumerable<Trend> GetTrends(int woeid)
+        {
+            var trends = new List<Trend>();
+            var trendsJson = GetTrendsJson(woeid);
+
+            // Validate Json response.
+            if (string.IsNullOrEmpty(trendsJson))
+                return trends;
+
+            // Parse Trends.
+            var trendsPlaceResponse = JsonConvert.DeserializeObject<GetTrendsPlaceResponse>(trendsJson);
+            trends.AddRange(trendsPlaceResponse.trends);
+
+            return trends;
+        }
+
+        /* Returns a collection of globally trending topics. */
+        public IEnumerable<Trend> GetTrendsForPlace()
+        {
+            return GetTrends(1);
         }
 
         /* Loads keys from config file.

@@ -1,6 +1,6 @@
 ﻿/* File:        TwitterEntities.cs
  * Purpose:     Represents the various entities in Twitter.
- * Version:     2.1
+ * Version:     2.2
  * Created:     10th February 2015
  * Author:      Gary Fernie
  * Exposes:     Tweet, Place, GetSearchTweetsResponse
@@ -14,6 +14,9 @@
  *              - File now also models API responses.
  *              2nd March 2015, ver 2.1
  *              - Added Trends entity.
+ *              3rd March 2015, ver 2.2
+ *              - Added TwitterBearerTokenResponse.
+ *              - Added GetTrendsPlaceResponse.
  */
 
 using System.Collections.Generic;
@@ -49,6 +52,15 @@ namespace GroupA.FolksOpinion.UI.Models
         public string query { get; set; }
     }
 
+    /* Twitter response: POST /oauth2/token
+     * https://dev.twitter.com/oauth/application-only
+     */
+    private class TwitterBearerTokenResponse
+    {
+        public string token_type { get; set; }
+        public string access_token { get; set; }
+    }
+
     /* Twitter response: GET search/tweets
      * https://dev.twitter.com/rest/reference/get/search/tweets
      */
@@ -64,6 +76,22 @@ namespace GroupA.FolksOpinion.UI.Models
             public string since_id_str { get; set; }
             public string query { get; set; }
             public string max_id_str { get; set; }
+        }
+    }
+
+    /* Twitter response: GET trends/place
+     * https://dev.twitter.com/rest/reference/get/trends/place
+     */
+    public class GetTrendsPlaceResponse
+    {
+        public string as_of { get; set; }
+        public IEnumerable<Location> locations { get; set; }
+        public IEnumerable<Trend> trends { get; set; }
+
+        public class Location
+        {
+            public string name { get; set; }
+            public string woeid { get; set; }
         }
     }
 }
