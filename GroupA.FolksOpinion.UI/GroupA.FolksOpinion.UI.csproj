@@ -129,7 +129,6 @@
     <Compile Include="Models\TwitterEntities.cs" />
     <Compile Include="Models\OpinionEntities.cs" />
     <Compile Include="Models\TwitterApi.cs" />
-    <Compile Include="Models\DatabaseModel.cs" />
     <Compile Include="Models\CumulativeBiasAnalyser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
