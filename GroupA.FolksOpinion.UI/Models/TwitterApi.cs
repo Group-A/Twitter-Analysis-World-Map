@@ -214,14 +214,6 @@ namespace GroupA.FolksOpinion.UI.Models
                 cacheExpiryMins: trendsResponseCacheExpiryMinsDefault);
         }
 
-        /* Gets global trends.
-         * WOEID: 1 (global)
-         */
-        public string GetTrendsJson()
-        {
-            return GetTrendsJson(1);
-        }
-
         /* Checks if keys are null or empty.
          * Returns true if valid; false if invalid.
          */

@@ -88,8 +88,10 @@ namespace GroupA.FolksOpinion.UI.Models
             return trends;
         }
 
-        /* Returns a collection of globally trending topics. */
-        public IEnumerable<Trend> GetTrendsForPlace()
+        /* Returns a collection of globally trending topics. 
+         * WOEID: 1 (worldwide)
+         */
+        public IEnumerable<Trend> GetTrends()
         {
             return GetTrends(1);
         }
