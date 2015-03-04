@@ -1,6 +1,5 @@
 ﻿/* File:        TwitterCacheEngine.cs
  * Purpose:     Abstract class to define how Twitter data will be cached
- * Version:     1.1
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
  * Exposes:     TwitterCacheEngine, TwitterCacheEngine.CacheResult
@@ -9,7 +8,7 @@
  *                any TwitterCacheEngine subclass so that they may be used elsewhere in
  *                the application.
  * 
- * Changes:     17th February 2015, ver 1.1, Gary Fernie
+ * Changes:     17th February 2015, Gary Fernie
  *              - Changed to use new opinion entities.
  */
 

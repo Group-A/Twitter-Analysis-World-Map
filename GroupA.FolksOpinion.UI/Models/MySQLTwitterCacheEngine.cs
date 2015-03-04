@@ -1,22 +1,20 @@
 ﻿/* File:        MySQLTwitterCacheEngine.cs
  * Purpose:     
- * Version:     1.2
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
  * Exposes:     MySQLTwitterCacheEngine
  *
  * Description: 
  * 
- * Changes:     17th February 2015, ver 1.1, Gary Fernie
+ * Changes:     17th February 2015, Gary Fernie
  *              - Changed to use new opinion entities.
  *              - Stubbed to allow build.
- *              
- *              25th February 2015, ver 1.2, Jamie Aitken
+ *              25th February 2015, Jamie Aitken
  *              - Fleshed out stubs
  *              
- * Still to Do: Make Insert Dynamic
- *              Remove the prefix from types i.e System.String, FolksOpinion.Place
- *              Decide on design of initial database, I'm thinking Place table and Opinion table should have an id_str
+ * Todo:        - Make Insert Dynamic
+ *              - Remove the prefix from types i.e System.String, FolksOpinion.Place
+ *              - Decide on design of initial database, I'm thinking Place table and Opinion table should have an id_str
  */
 
 using System;

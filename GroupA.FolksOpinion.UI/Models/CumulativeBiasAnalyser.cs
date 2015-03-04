@@ -1,30 +1,29 @@
 ﻿/* File:        CumulativeBiasAnalyser.cs
  *              (previously known as "Analyser.cs")
  * Purpose:     Analyses a string for opinion.
- * Version:     1.6
  * Created:     
  * Author:      Michael Rodenhurst
  * Exposes:     CumulativeBiasAnalyser
  * 
  * Description: Uses a simple word count to find opinion.
  * 
- * Changes:     17th February 2015, ver 1.1, Gary Fernie
+ * Changes:     17th February 2015, Gary Fernie
  *              - Implemented ILexicalBiasAnalyser interface.
  *              - Removed Tweet-specific references.
  *              - Added explicit empty default contructor.
- *              17th February 2015, ver 1.2, Gary Fernie
+ *              17th February 2015, Gary Fernie
  *              - Added functionality to calculate opinion, based on 
  *                  new pos/neg metrics.
  *              - Code is 99% copied fom old method (still in file).
  *              - Bit of a hack.
- *              17th February 2015, ver 1.3, Gary Fernie
+ *              17th February 2015, Gary Fernie
  *              - Fixed dictionary paths.
  *              - Moved dictionaries to more appropriate folder.
  *              - Fixed dictionary cache names.
- *              24th February 2015, ver 1.5, Gary Fernie
+ *              24th February 2015, Gary Fernie
  *              - Halved arbitrary clamp.
  *              - Small change to GetTextOpinion to properly use clamp.
- *              24th February 2015, ver 1.6, Gary Fernie
+ *              24th February 2015, Gary Fernie
  *              - Bugfix: GetTextOpinion now strips punctuation.
  */
 

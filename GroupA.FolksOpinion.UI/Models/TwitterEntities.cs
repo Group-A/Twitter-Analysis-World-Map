@@ -1,6 +1,5 @@
 ﻿/* File:        TwitterEntities.cs
  * Purpose:     Represents the various entities in Twitter.
- * Version:     2.0
  * Created:     10th February 2015
  * Author:      Gary Fernie
  * Exposes:     Tweet, Place, GetSearchTweetsResponse
@@ -10,7 +9,7 @@
  *              - Entities represented here may be have an imcomplete
  *                list of fields.
  *                
- * Changes:     17th February 2015, 2.0
+ * Changes:     17th February 2015
  *              - File now also models API responses.
  */
 

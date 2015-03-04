@@ -1,6 +1,5 @@
 ﻿/* File:        MySQLInterface.cs
  * Purpose:     Generic interface to connect to a MySQL backend.
- * Version:     0.1
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
  * Exposes:     CreateDatabase, DropDatabase, CreateTable, DropTable,

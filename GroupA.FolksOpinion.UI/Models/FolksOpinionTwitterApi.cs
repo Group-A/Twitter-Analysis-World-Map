@@ -1,6 +1,5 @@
 ﻿/* File:        FolksOpinionTwitterapi.cs
  * Purpose:     Specialised TwitterApi class for the FolksOpinion application.
- * Version:     1.3
  * Created:     9th February 2015
  * Author:      Gary Fernie
  * Exposes:     FolksOpinionTwitterApi
@@ -10,12 +9,12 @@
  *              - Loads keys from application config file.
  *              - Makes key obfuscation checks.
  *              
- * Changes:     17th February 2015, 1.1
+ * Changes:     17th February 2015
  *              - Added GetTweets method.
- *              17th February 2015, 1.2
+ *              17th February 2015
  *              - Changed GetTweets method to better handle responses.
  *              - Config bug seems resolved.
- *              18th February 2015, 1.3
+ *              18th February 2015
  *              - Added functionality to perform multiple consecutive
  *                  searches to amass more subject Tweets.
  */

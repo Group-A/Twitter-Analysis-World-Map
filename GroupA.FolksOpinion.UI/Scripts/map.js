@@ -2,8 +2,6 @@
 	File Name: map.js
 	Author(s): Julian Reid, Jamie Aitken
 	Created: 22/01/2015
-	Modified: 11/02/2015
-	Version: 0.7
 	Description:
 		Renders a map with tinted countries that represent opinion data from 
 		twitter. Provides zooming and panning functionality. Also displays

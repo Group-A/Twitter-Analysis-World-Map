@@ -1,6 +1,5 @@
 ﻿/* File:        Opinioniator.cs
  * Purpose:     Finds the world's opinion on a subject.
- * Version:     1.0
  * Created:     17th February 2015
  * Author:      Gary Fernie
  * Exposes:     Opinionator
