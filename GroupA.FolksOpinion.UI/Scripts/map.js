@@ -141,8 +141,7 @@ function SearchbtnonClick()
 
 function requestTopic(topic)
 {
-	// TODO: Encode topic correctly.
-	var url = "/Data/Opinion?q=" + topic;
+    var url = "/Data/Opinion?q=" + encodeURIComponent(topic);
 	var request = newRequest();
 	
 	request.open("GET", url, true);
