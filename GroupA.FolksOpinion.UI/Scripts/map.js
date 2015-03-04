@@ -111,6 +111,24 @@ function parseJSONData(string)
 	sr.innerHTML += "</table>";*/
 }
 
+function getTags()
+{
+    var display = document.getElementById("hashtags");
+    var request = newRequest();
+    var url = "insert end point";
+    request.open("GET", url, true);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.withCredentials = true;
+    request.onload = function (e) {
+        var callback = JSON.parse(request.response);
+        for (var i in callback.trends) {
+            var hashtag = callback.trends[i].name;
+            display.innerHTML += hashtag;
+        }
+    }.bind(this);
+    request.send();
+}
+
 function SearchbtnonClick()
 {
 	var topic = document.getElementById("searchTwi").value;
