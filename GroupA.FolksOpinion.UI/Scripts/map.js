@@ -123,7 +123,7 @@ function getTags()
         var callback = JSON.parse(request.response);
         for (var i in callback.trends) {
             var hashtag = callback.trends[i].name;
-            display.innerHTML += hashtag;
+            display.innerHTML += "<li><a href='#' onclick='requestTopic(\""+callback.trends[i].query+"\")'>"+hashtag+"</a></li>";
         }
     }.bind(this);
     request.send();
