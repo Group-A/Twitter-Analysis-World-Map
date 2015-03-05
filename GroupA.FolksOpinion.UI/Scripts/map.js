@@ -139,15 +139,20 @@ function SearchbtnonClick()
 
 function requestTopic(topic)
 {
+    var process = document.getElementById("process");
     var url = "/Data/Opinion?q=" + encodeURIComponent(topic);
 	var request = newRequest();
-	
+	if (request.readyState < 4)
+	{
+	    process.style.display = "block";
+	}
 	request.open("GET", url, true);
 	request.setRequestHeader("Content-Type", "application/json");
 	request.withCredentials = true;
-	
+    
 	request.onload = function(e)
 	{
+	    process.style.display = "none";
 		parseJSONData(request.response);
 		renderMap();
 	}.bind(this);

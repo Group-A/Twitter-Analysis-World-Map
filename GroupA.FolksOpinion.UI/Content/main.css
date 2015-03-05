@@ -18,6 +18,10 @@ h1, h2 {
 	margin:                                0px;
 }
 
+#process{
+    display:                               none;
+}
+
 /* Map Container */
 #mapContainer {
 	width:                                 100%;
