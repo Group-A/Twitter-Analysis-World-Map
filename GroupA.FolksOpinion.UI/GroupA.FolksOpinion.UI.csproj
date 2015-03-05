@@ -138,6 +138,7 @@
     <Content Include="App_Data\Dictionary\en_README.txt" />
     <Content Include="Content\Images\closeHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\openHashtagSelectionSidebarButton.png" />
+    <Content Include="Content\Images\optionsButton.png" />
     <Content Include="Content\Images\placeholderMap.png" />
     <Content Include="Content\main.css" />
     <Content Include="favicon.ico" />
