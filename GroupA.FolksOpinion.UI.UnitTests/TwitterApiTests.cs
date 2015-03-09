@@ -41,7 +41,7 @@ namespace GroupA.FolksOpinion.UI.UnitTests
         [TestMethod]
         public void TestFolksOpinionTwitterApiConstructor()
         {
-            FolksOpinionTwitterApi tWithConfig = new FolksOpinionTwitterApi();
+            FolksOpinionTwitterApi tWithConfig = FolksOpinionTwitterApi.Instance;
         }
 
         [TestMethod]
@@ -54,7 +54,7 @@ namespace GroupA.FolksOpinion.UI.UnitTests
         [TestMethod]
         public void TestApiRequest()
         {
-            TwitterApi t = new FolksOpinionTwitterApi();
+            TwitterApi t = FolksOpinionTwitterApi.Instance;
             var result = t.GetApiResource("/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi");
         }
     }

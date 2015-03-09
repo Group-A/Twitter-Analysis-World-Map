@@ -1,6 +1,6 @@
 ﻿/* File:        FolksOpinionTwitterapi.cs
  * Purpose:     Specialised TwitterApi class for the FolksOpinion application.
- * Version:     1.4
+ * Version:     1.5
  * Created:     9th February 2015
  * Author:      Gary Fernie
  * Exposes:     FolksOpinionTwitterApi
@@ -21,6 +21,8 @@
  *              3rd March 2015, ver 1.4
  *              - Validation improvements.
  *              - Get trends functionality.
+ *              9th March 2015, ver 1.5
+ *              - Implemented singleton pattern.
  */
 
 using Newtonsoft.Json;
@@ -29,12 +31,15 @@ using System.Configuration;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public class FolksOpinionTwitterApi : TwitterApi
+    public sealed class FolksOpinionTwitterApi : TwitterApi
     {
+        // Singleton instance.
+        private static readonly FolksOpinionTwitterApi instance = new FolksOpinionTwitterApi();
+        
         private static int numTweetsToRetrieve = 100; // Tweets per request.
         private static int numRequestsToPerform = 10; // Requests per subject.
         
-        public FolksOpinionTwitterApi()
+        private FolksOpinionTwitterApi()
         {
             var keysLoaded = LoadKeysFromConfig();
             if (keysLoaded)
@@ -43,6 +48,12 @@ namespace GroupA.FolksOpinion.UI.Models
                 bearerTokenCredentialsBase64Encoded = EncodeConsumerKeyAndSecret(consumerKey, consumerSecret);
                 bearerToken = GetBearerToken(bearerTokenCredentialsBase64Encoded);
             }
+        }
+
+        // Gets a singleton instance of the class.
+        public static FolksOpinionTwitterApi Instance
+        {
+            get { return instance; }
         }
 
         /* Returns a colection of Tweets matching a search term. */
