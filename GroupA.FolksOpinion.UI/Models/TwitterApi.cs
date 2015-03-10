@@ -25,6 +25,8 @@
  *              - Moved TwitterBearerTokenResponse to TwitterEntities.cs.
  *              3rd March 2015, ver 1.4.1
  *              - Improved caching functionality.
+ *              9th March 2015
+ *              - Fixed cache null reference exception.
  */
 
 using Newtonsoft.Json;
@@ -55,7 +57,7 @@ namespace GroupA.FolksOpinion.UI.Models
         private static string bearerTokenRequestBody = "grant_type=client_credentials";
 
         // Memory cache for caching responses.
-        private static Cache responseCache = new Cache();
+        private static Cache responseCache = HttpRuntime.Cache;
         private static double responseCacheExpiryMinsDefault = 3d; // Mins until cached items expire.
         private static double trendsResponseCacheExpiryMinsDefault = 5d;
 
@@ -170,7 +172,7 @@ namespace GroupA.FolksOpinion.UI.Models
         {
             // Check cache.
             if (cache)
-                if (responseCache[resource] != null)
+                if (responseCache.Get(resource) != null)
                     return (string) responseCache[resource];
             
             // Get resource and validate.
