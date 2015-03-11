@@ -80,6 +80,9 @@ function renderMap()
 
 function parseJSONData(string)
 {
+	for (var i in countries)
+        countries[i].attitude = 0;
+		
 	var data = JSON.parse(string);
 	
 	for(var i in data.CountryOpinions)
@@ -224,11 +227,18 @@ function initKeyListeners(element)
 		e.preventDefault();
 	});
 	
-	var mouseWheelFunction = function(e){
+	var mouseWheelFunction = function(e)
+	{
 		if(e.wheelDelta)
-			mouseState.current.wheelPosition += e.wheelDelta;
-		if(e.detail)
+		{
+			// Chrome, etc.
+			mouseState.current.wheelPosition -= e.wheelDelta;
+		}
+		else if(e.detail)
+		{
+			// Firefox
 			mouseState.current.wheelPosition += e.detail;
+		}
 		e.preventDefault();
 	}
 	
