@@ -18,17 +18,10 @@ h1, h2 {
 	margin:                                0px;
 }
 
-#process{
-    display:                               none;
-}
-
 /* Map Container */
 #mapContainer {
 	width:                                 100%;
 	overflow:                              hidden;
-}
-#mapContainer img {
-	vertical-align: bottom;
 }
 
 /* Hashtag Selection Sidebar */
@@ -84,19 +77,21 @@ h1, h2 {
 	cursor:                                pointer;
 }
 
-#hashtagSelectionSidebar #customSearchTerm {
+#hashtagSelectionSidebar #customSearchTermField {
 	padding:                               15px 15px 15px 45px;
 	margin:                                20px 0px 0px 0px;
 	width:                                 240px;
-	background:                            rgba(1, 1, 1, 0.2) url('~/Content/Images/customSearchTermFieldBackground.png') no-repeat 50%;
+	background:                            rgba(1, 1, 1, 0.1) url('~/Content/Images/customSearchTermFieldBackground.png') no-repeat 50%;
 	outline:                               none;
 	font-size:                             20px;
+	color:                                 #FFF;
 	border:                                none;
 	border-radius:                         2px;
 	transition:                            background 0.5s;
+	text-align:                            right;
 }
 
-#hashtagSelectionSidebar #customSearchTerm:focus {
+#hashtagSelectionSidebar #customSearchTermField:focus {
 	background-position:                   15px 50%;
 }
 
