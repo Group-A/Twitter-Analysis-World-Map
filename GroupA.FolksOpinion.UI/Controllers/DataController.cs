@@ -21,7 +21,7 @@ namespace GroupA.FolksOpinion.UI.Controllers
 
             result = JsonConvert.SerializeObject(worldOpinion);
 
-            return Json(result, JsonRequestBehavior.AllowGet); ;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }
