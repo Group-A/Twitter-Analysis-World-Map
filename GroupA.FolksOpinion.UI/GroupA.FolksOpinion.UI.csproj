@@ -123,6 +123,7 @@
     <Compile Include="Models\MySQLInterface.cs" />
     <Compile Include="Models\MySQLTwitterCacheEngine.cs" />
     <Compile Include="Models\Opinionator.cs" />
+    <Compile Include="Models\TrendingTopics.cs" />
     <Compile Include="Models\TweetAnalyser.cs" />
     <Compile Include="Models\TwitterCacheEngine.cs" />
     <Compile Include="Models\FolksOpinionTwitterApi.cs" />
