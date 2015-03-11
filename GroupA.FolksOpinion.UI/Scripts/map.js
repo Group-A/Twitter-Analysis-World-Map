@@ -80,18 +80,8 @@ function renderMap()
 
 function parseJSONData(string)
 {
-    if (string.charAt(0) == '"')
-    {
-        console.log("Cleaning string.");
-        string = string.substr(1, string.length - 2);
-        string = string.replace(/\\/g, "");
-    }
-
-    var data = JSON.parse(string);
+	var data = JSON.parse(string);
 	
-    for (var i in countries)
-        countries[i].attitude = 0;
-
 	for(var i in data.CountryOpinions)
 	{
 		var opinion = data.CountryOpinions[i];
@@ -137,19 +127,9 @@ function getTags()
     request.send();
 }
 
-function SearchbtnonClick()
-{
-	var topic = document.getElementById("customSearchTerm").value;
-	if(topic.length>0)
-	{
-		requestTopic(topic);
-	}
-}
-
-function customSearchTerm(event)
-{
+function searchCustomTerm(event) {
 	if(event.keyCode == 13) {
-		var topic = document.getElementById("customSearchTerm").value;
+		var topic = document.getElementById("customSearchTermField").value;
 		
 		if(topic.length > 0) {
 			requestTopic(topic);
@@ -159,12 +139,12 @@ function customSearchTerm(event)
 
 function requestTopic(topic)
 {
-    var process = document.getElementById("process");
+    var searchField = document.getElementById("customSearchTermField");
     var url = "/Data/Opinion?q=" + encodeURIComponent(topic);
 	var request = newRequest();
 	if (request.readyState < 4)
 	{
-	    process.style.display = "block";
+	    searchField.style.backgroundImage = "~/Content/Images/process.gif";
 	}
 	request.open("GET", url, true);
 	request.setRequestHeader("Content-Type", "application/json");
@@ -172,12 +152,10 @@ function requestTopic(topic)
     
 	request.onload = function(e)
 	{
-	    process.style.display = "none";
+	    searchField.style.backgroundImage = "~/Content/Images/customSearchTermFieldBackground.png";
 		parseJSONData(request.response);
 		renderMap();
 	}.bind(this);
-	
-	
 	
 	request.send();
 }
@@ -247,18 +225,10 @@ function initKeyListeners(element)
 	});
 	
 	var mouseWheelFunction = function(e){
-	    if (e.wheelDelta)
-	    {
-            // Chrome, etc...
-	        mouseState.current.wheelPosition -= e.wheelDelta/2;
-	        console.log("Chrome: " + e.wheelDelta);
-	    }
-	    else if (e.detail)
-	    {
-	        // Firefox
-	        mouseState.current.wheelPosition += e.detail;
-	        console.log("Firefox: " + e.detail);
-	    }
+		if(e.wheelDelta)
+			mouseState.current.wheelPosition += e.wheelDelta;
+		if(e.detail)
+			mouseState.current.wheelPosition += e.detail;
 		e.preventDefault();
 	}
 	
