@@ -247,10 +247,18 @@ function initKeyListeners(element)
 	});
 	
 	var mouseWheelFunction = function(e){
-		if(e.wheelDelta)
-			mouseState.current.wheelPosition += e.wheelDelta;
-		if(e.detail)
-			mouseState.current.wheelPosition += e.detail;
+	    if (e.wheelDelta)
+	    {
+            // Chrome, etc...
+	        mouseState.current.wheelPosition -= e.wheelDelta/2;
+	        console.log("Chrome: " + e.wheelDelta);
+	    }
+	    else if (e.detail)
+	    {
+	        // Firefox
+	        mouseState.current.wheelPosition += e.detail;
+	        console.log("Firefox: " + e.detail);
+	    }
 		e.preventDefault();
 	}
 	
