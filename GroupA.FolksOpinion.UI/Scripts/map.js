@@ -129,13 +129,23 @@ function getTags()
 
 function SearchbtnonClick()
 {
-	var topic = document.getElementById("searchTwi").value;
+	var topic = document.getElementById("customSearchTerm").value;
 	if(topic.length>0)
 	{
 		requestTopic(topic);
 	}
 }
 
+function customSearchTerm(event)
+{
+	if(event.keyCode == 13) {
+		var topic = document.getElementById("customSearchTerm").value;
+		
+		if(topic.length > 0) {
+			requestTopic(topic);
+		}
+	}
+}
 
 function requestTopic(topic)
 {
