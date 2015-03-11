@@ -80,8 +80,18 @@ function renderMap()
 
 function parseJSONData(string)
 {
-	var data = JSON.parse(string);
+    if (string.charAt(0) == '"')
+    {
+        console.log("Cleaning string.");
+        string = string.substr(1, string.length - 2);
+        string = string.replace(/\\/g, "");
+    }
+
+    var data = JSON.parse(string);
 	
+    for (var i in countries)
+        countries[i].attitude = 0;
+
 	for(var i in data.CountryOpinions)
 	{
 		var opinion = data.CountryOpinions[i];
@@ -166,6 +176,8 @@ function requestTopic(topic)
 		parseJSONData(request.response);
 		renderMap();
 	}.bind(this);
+	
+	
 	
 	request.send();
 }
