@@ -226,15 +226,9 @@ function initKeyListeners(element)
 	
 	var mouseWheelFunction = function(e){
 		if(e.wheelDelta)
-		{
-			// Chrome, etc.
-			mouseState.current.wheelPosition -= e.wheelDelta;
-		}
+			mouseState.current.wheelPosition += e.wheelDelta;
 		if(e.detail)
-		{
-			// Firefox
 			mouseState.current.wheelPosition += e.detail;
-		}
 		e.preventDefault();
 	}
 	
