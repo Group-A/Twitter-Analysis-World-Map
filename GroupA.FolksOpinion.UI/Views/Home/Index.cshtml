@@ -14,11 +14,6 @@
 <div id="hashtagSelectionSidebar">
     <h1>Folk's<br />Opinion</h1>
     <div id="separator"></div>
-    <table>
-        <tr><td><input type="search" id="searchTwi" placeholder="Enter search term/hashtag" /></td></tr>
-        <tr><td><input type="submit" onclick="SearchbtnonClick()"></td></tr>
-    </table>
-    <img src="~/Content/Images/process.gif" alt="process gif" id="process" />
     <h2>Click a top trending<br />hashtag to analysis it.</h2>
     <ol id="hashtags">
         <li>cats</li>
@@ -30,7 +25,7 @@
         <li>about</li>
         <li>help</li>
     </ul>
-    <input type="text" id="customSearchTerm" onkeypress="customSearchTerm(event)" />
+    <input type="text" id="customSearchTermField" onkeypress="searchCustomTerm(event)" />
     <img src="~/Content/Images/closeHashtagSelectionSidebarButton.png" alt="Close Sidebar" id="closeHashtagSelectionSidebarButton" />
 </div>
 
