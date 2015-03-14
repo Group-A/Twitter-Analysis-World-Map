@@ -28,6 +28,8 @@
  *              - Added a hashtag call
  *              9th March 2015
  *              - Fixed cache null reference exception.
+ *              14th March 2015
+ *              - Remove redundant GetHashTags method.
  */
 
 using Newtonsoft.Json;
@@ -219,20 +221,6 @@ namespace GroupA.FolksOpinion.UI.Models
                 resource: "/1.1/trends/place.json?id=" + woeid, 
                 cache: true, 
                 cacheExpiryMins: trendsResponseCacheExpiryMinsDefault);
-        }
-
-        public string GetHashTags()
-        {
-            var hashtags = GetApiResource("/1.1/trends/place.json?id=1");
-            if (hashtags == null) return "";
-            if (hashtags.Equals("")) return "";
-
-            dynamic tagObject = JObject.Parse(hashtags);
-            if (tagObject.errors == null)
-            {
-                return hashtags;
-            }
-            else return "";
         }
 
         /* Checks if keys are null or empty.
