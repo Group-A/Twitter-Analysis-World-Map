@@ -130,7 +130,6 @@
     <Compile Include="Models\TwitterEntities.cs" />
     <Compile Include="Models\OpinionEntities.cs" />
     <Compile Include="Models\TwitterApi.cs" />
-    <Compile Include="Models\DatabaseModel.cs" />
     <Compile Include="Models\CumulativeBiasAnalyser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -140,7 +139,8 @@
     <Content Include="App_Data\Dictionary\en_README.txt" />
     <Content Include="Content\Images\closeHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\openHashtagSelectionSidebarButton.png" />
-    <Content Include="Content\Images\placeholderMap.png" />
+    <Content Include="Content\Images\optionsButton.png" />
+    <Content Include="Content\Images\process.gif" />
     <Content Include="Content\main.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

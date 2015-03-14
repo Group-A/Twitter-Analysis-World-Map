@@ -1,7 +1,6 @@
 ﻿/* File:        TwitterApi.cs
  * Purpose:     Provides functionality to issue application-only
  *              Oauth2 requests to the Twitter API.
- * Version:     1.4.1
  * Created:     3rd February 2015
  * Author:      Gary Fernie
  * Exposes:     TwitterApi, BearerTokenNotGrantedException
@@ -11,20 +10,22 @@
  *              - Makes http API requests using bearer token.
  *              - Much of the class' functionality can be used in a static context
  * 
- * Changes:     9th February 2015, ver1.1
+ * Changes:     9th February 2015
  *              - Removed application-specific code (generalised class).
- *              17th February 2015, ver 1.2
+ *              17th February 2015
  *              - Added GetTweets method.
- *              18th February 2015, ver 1.3
+ *              18th February 2015
  *              - Added more error checking to GetTweetsJson method.
- *              2nd March 2015, ver 1.4
+ *              2nd March 2015
  *              - Separated API requests and response error checking.
  *              - Added GET trends/place functionality.
  *              - Added response caching.
  *              - Validation improvements.
  *              - Moved TwitterBearerTokenResponse to TwitterEntities.cs.
- *              3rd March 2015, ver 1.4.1
+ *              3rd March 2015
  *              - Improved caching functionality.
+ *              4th March 2015, Jamie Aitken
+ *              - Added a hashtag call
  *              9th March 2015
  *              - Fixed cache null reference exception.
  */
@@ -218,6 +219,20 @@ namespace GroupA.FolksOpinion.UI.Models
                 resource: "/1.1/trends/place.json?id=" + woeid, 
                 cache: true, 
                 cacheExpiryMins: trendsResponseCacheExpiryMinsDefault);
+        }
+
+        public string GetHashTags()
+        {
+            var hashtags = GetApiResource("/1.1/trends/place.json?id=1");
+            if (hashtags == null) return "";
+            if (hashtags.Equals("")) return "";
+
+            dynamic tagObject = JObject.Parse(hashtags);
+            if (tagObject.errors == null)
+            {
+                return hashtags;
+            }
+            else return "";
         }
 
         /* Checks if keys are null or empty.

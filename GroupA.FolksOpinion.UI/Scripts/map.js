@@ -2,8 +2,6 @@
 	File Name: map.js
 	Author(s): Julian Reid, Jamie Aitken
 	Created: 22/01/2015
-	Modified: 11/02/2015
-	Version: 0.7
 	Description:
 		Renders a map with tinted countries that represent opinion data from 
 		twitter. Provides zooming and panning functionality. Also displays
@@ -82,6 +80,9 @@ function renderMap()
 
 function parseJSONData(string)
 {
+	for (var i in countries)
+        countries[i].attitude = 0;
+		
 	var data = JSON.parse(string);
 	
 	for(var i in data.CountryOpinions)
@@ -111,28 +112,50 @@ function parseJSONData(string)
 	sr.innerHTML += "</table>";*/
 }
 
-function SearchbtnonClick()
+function getTags()
 {
-	var topic = document.getElementById("searchTwi").value;
-	if(topic.length>0)
-	{
-		requestTopic(topic);
+    var display = document.getElementById("hashtags");
+    var request = newRequest();
+    var url = "insert end point";
+    request.open("GET", url, true);
+    request.setRequestHeader("Content-Type", "application/json");
+    request.withCredentials = true;
+    request.onload = function (e) {
+        var callback = JSON.parse(request.response);
+        for (var i in callback.trends) {
+            var hashtag = callback.trends[i].name;
+            display.innerHTML += "<li><a href='#' onclick='requestTopic(\""+callback.trends[i].query+"\")'>"+hashtag+"</a></li>";
+        }
+    }.bind(this);
+    request.send();
+}
+
+function searchCustomTerm(event) {
+	if(event.keyCode == 13) {
+		var topic = document.getElementById("customSearchTermField").value;
+		
+		if(topic.length > 0) {
+			requestTopic(topic);
+		}
 	}
 }
 
-
 function requestTopic(topic)
 {
-	// TODO: Encode topic correctly.
-	var url = "/Data/Opinion?q=" + topic;
+    var searchField = document.getElementById("customSearchTermField");
+    var url = "/Data/Opinion?q=" + encodeURIComponent(topic);
 	var request = newRequest();
-	
+	if (request.readyState < 4)
+	{
+	    searchField.style.backgroundImage = "~/Content/Images/process.gif";
+	}
 	request.open("GET", url, true);
 	request.setRequestHeader("Content-Type", "application/json");
 	request.withCredentials = true;
-	
+    
 	request.onload = function(e)
 	{
+	    searchField.style.backgroundImage = "~/Content/Images/customSearchTermFieldBackground.png";
 		parseJSONData(request.response);
 		renderMap();
 	}.bind(this);
@@ -204,11 +227,18 @@ function initKeyListeners(element)
 		e.preventDefault();
 	});
 	
-	var mouseWheelFunction = function(e){
+	var mouseWheelFunction = function(e)
+	{
 		if(e.wheelDelta)
-			mouseState.current.wheelPosition += e.wheelDelta;
-		if(e.detail)
+		{
+			// Chrome, etc.
+			mouseState.current.wheelPosition -= e.wheelDelta;
+		}
+		else if(e.detail)
+		{
+			// Firefox
 			mouseState.current.wheelPosition += e.detail;
+		}
 		e.preventDefault();
 	}
 	
@@ -429,6 +459,8 @@ function drawCountry(ctx, country)
 
 function drawRawMap(canvas, ctx)
 {
+    ctx.save();
+
 	var hScale = canvas.width/mapWidth,
 		vScale = canvas.height/mapHeight
 		

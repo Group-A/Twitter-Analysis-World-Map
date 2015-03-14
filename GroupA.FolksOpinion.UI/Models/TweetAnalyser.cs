@@ -1,6 +1,5 @@
 ﻿/* File:        TweetAnalyser.cs
  * Purpose:     Analyses a Tweet for opinion.
- * Version:     1.0
  * Created:     17th February 2015
  * Author:      Gary Fernie
  * Exposes:     TweetAnalyser

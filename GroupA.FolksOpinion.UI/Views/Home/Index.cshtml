@@ -16,10 +16,6 @@
 <div id="hashtagSelectionSidebar">
     <h1>Folk's<br />Opinion</h1>
     <div id="separator"></div>
-    <table>
-        <tr><td><input type="search" id="searchTwi" placeholder="Enter search term/hashtag" /></tr></td>
-        <tr><td><input type="submit" onclick="SearchbtnonClick()"></tr></td>
-    </table>
     <h2>Click a top trending<br />hashtag to analysis it.</h2>
     <ol id="hashtags">
         @foreach (var trend in Model.CurrentTrends)
@@ -31,10 +27,16 @@
             <li>@trend.name</li>
         }
     </ol>
-    <img src="~/Content/Images/closeHashtagSelectionSidebarButton.png" alt="Close Sidebar" id="closeHashtagSelectionSidebarButton" />
-></div>
+    <ul id="modalLinks">
+        <li>about</li>
+        <li>help</li>
+    </ul>
+    <input type="text" id="customSearchTermField" onkeypress="searchCustomTerm(event)" placeholder="Custom Search"/> <img src="~/Content/Images/process.gif" id="process"/>
+    <img src="~/Content/Images/closeHashtagSelectionSidebarButton.png" alt="Close Sidebar" id="closeHashtagSelectionSidebarButton" /> 
+</div>
 
 <img src="~/Content/Images/openHashtagSelectionSidebarButton.png" alt="Open Sidebar" id="openHashtagSelectionSidebarButton" />
+<img src="~/Content/Images/optionsButton.png" alt="Options" id="optionsButton" />
 
 <div id="aboutModalBox" class="modalBox">
     <h1>About</h1>

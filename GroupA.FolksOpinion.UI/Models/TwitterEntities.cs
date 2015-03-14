@@ -1,6 +1,5 @@
 ﻿/* File:        TwitterEntities.cs
  * Purpose:     Represents the various entities in Twitter.
- * Version:     2.2
  * Created:     10th February 2015
  * Author:      Gary Fernie
  * Exposes:     Tweet, Place, GetSearchTweetsResponse
@@ -10,11 +9,11 @@
  *              - Entities represented here may be have an imcomplete
  *                list of fields.
  *                
- * Changes:     17th February 2015, ver 2.0
+ * Changes:     17th February 2015
  *              - File now also models API responses.
- *              2nd March 2015, ver 2.1
+ *              2nd March 2015
  *              - Added Trends entity.
- *              3rd March 2015, ver 2.2
+ *              3rd March 2015
  *              - Added TwitterBearerTokenResponse.
  *              - Added GetTrendsPlaceResponse.
  */

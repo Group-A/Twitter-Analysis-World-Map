@@ -1,6 +1,5 @@
 ﻿/* File:        OpinionEntities.cs
  * Purpose:     Represents the various opinion entities in our app.
- * Version:     1.0
  * Created:     17th February 2015
  * Author:      Gary Fernie
  * Exposes:     Opinion, TweetOpinion, CountryOpinion, WorldSubjectOpinion
