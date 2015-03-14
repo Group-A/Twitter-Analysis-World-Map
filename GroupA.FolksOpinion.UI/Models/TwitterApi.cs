@@ -16,8 +16,20 @@
  *              - Added GetTweets method.
  *              18th February 2015
  *              - Added more error checking to GetTweetsJson method.
+ *              2nd March 2015
+ *              - Separated API requests and response error checking.
+ *              - Added GET trends/place functionality.
+ *              - Added response caching.
+ *              - Validation improvements.
+ *              - Moved TwitterBearerTokenResponse to TwitterEntities.cs.
+ *              3rd March 2015
+ *              - Improved caching functionality.
  *              4th March 2015, Jamie Aitken
  *              - Added a hashtag call
+ *              9th March 2015
+ *              - Fixed cache null reference exception.
+ *              14th March 2015
+ *              - Remove redundant GetHashTags method.
  */
 
 using Newtonsoft.Json;
@@ -27,6 +39,7 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Web;
+using System.Web.Caching;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
@@ -46,7 +59,12 @@ namespace GroupA.FolksOpinion.UI.Models
         private static string bearerTokenHeaderContentType = "application/x-www-form-urlencoded";
         private static string bearerTokenRequestBody = "grant_type=client_credentials";
 
-        public TwitterApi() { }
+        // Memory cache for caching responses.
+        private static Cache responseCache = HttpRuntime.Cache;
+        private static double responseCacheExpiryMinsDefault = 3d; // Mins until cached items expire.
+        private static double trendsResponseCacheExpiryMinsDefault = 5d;
+
+        protected TwitterApi() { }
         
         public TwitterApi(string consumerKey, string consumerSecret)
         {
@@ -120,11 +138,12 @@ namespace GroupA.FolksOpinion.UI.Models
          * Resouce e.g.: "/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi"
          * Gets: https://api.twitter.com/1.1/statuses/user_timeline.json?count=100&screen_name=twitterapi
          */
-        public static string GetApiResource(string bearerToken, string resource)
+        public static string MakeApiGetRequest(string bearerToken, string resource)
         {
             string response = "";
-            if (bearerToken == null) return response;
-            if (bearerToken.Equals("")) return response;
+
+            // Validate bearer token.
+            if (string.IsNullOrEmpty(bearerToken)) return response;
 
             using (var client = new HttpClient())
             {
@@ -141,39 +160,67 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Uses this object's token. */
-        public string GetApiResource(string resource)
+        public string MakeApiGetRequest(string resource)
         {
-            return GetApiResource(bearerToken, resource);
+            return MakeApiGetRequest(bearerToken, resource);
         }
 
-        /* Uses GetApiResource to get specifically Tweets matching a search term */
+        /* Make request to Twitter API for supplied resource.
+         * Returns Json response.
+         * Uses caching - disabled by default.
+         * Uses MakeApiGetRequest.
+         * Validates response, returns empty string if invalid or error.
+         */
+        public string GetApiResource(string resource, bool cache = false, double cacheExpiryMins = 0)
+        {
+            // Check cache.
+            if (cache)
+                if (responseCache.Get(resource) != null)
+                    return (string) responseCache[resource];
+            
+            // Get resource and validate.
+            var response = MakeApiGetRequest(resource);
+            if (string.IsNullOrEmpty(response)) return "";
+
+            // Check for errors.
+            try { 
+                dynamic responseObject = new object();
+                responseObject = JObject.Parse(response); 
+                if (responseObject.errors != null)
+                    return "";
+            }
+            catch { /* Do nothing. */ }
+
+            // Cache response.
+            if (cache)
+                responseCache.Insert(
+                    key: resource, 
+                    value: response, 
+                    absoluteExpiration: DateTime.Now.AddMinutes(
+                        cacheExpiryMins != 0 ? cacheExpiryMins : responseCacheExpiryMinsDefault), 
+                    dependencies: null, 
+                    slidingExpiration: Cache.NoSlidingExpiration);
+
+            return response;
+            
+        }
+
+        /* Gets Tweets matching a search term, using GetApiResource. */
         public string GetTweetsJson(string searchTerm)
         {
-            // Get resource and validate.
-            var tweets = GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
-            if (tweets == null) return "";
-            if (tweets.Equals("")) return "";
-
-            // Check for errors and return results.
-            dynamic tweetsObject = JObject.Parse(tweets);
-            if (tweetsObject.errors == null)
-                return tweets;
-
-            else return "";
+            return GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
         }
 
-        public string GetHashTags()
+        /* Gets trends for a WOEID (location).
+         * https://dev.twitter.com/rest/reference/get/trends/place
+         * WEOID: http://zourbuth.com/tools/woeid/
+         */
+        public string GetTrendsJson(int woeid)
         {
-            var hashtags = GetApiResource("/1.1/trends/place.json?id=1");
-            if (hashtags == null) return "";
-            if (hashtags.Equals("")) return "";
-
-            dynamic tagObject = JObject.Parse(hashtags);
-            if (tagObject.errors == null)
-            {
-                return hashtags;
-            }
-            else return "";
+            return GetApiResource(
+                resource: "/1.1/trends/place.json?id=" + woeid, 
+                cache: true, 
+                cacheExpiryMins: trendsResponseCacheExpiryMinsDefault);
         }
 
         /* Checks if keys are null or empty.
@@ -181,8 +228,8 @@ namespace GroupA.FolksOpinion.UI.Models
          */
         protected static bool ValidateKeys(string consumerKey, string consumerSecret)
         {
-            if (consumerKey == null || consumerSecret == null) return false;
-            if (consumerKey.Equals("") || consumerSecret.Equals("")) return false;
+            if (string.IsNullOrEmpty(consumerKey)) return false;
+            if (string.IsNullOrEmpty(consumerSecret)) return false;
 
             // Tests passed, keys valid.
             return true;
@@ -192,15 +239,6 @@ namespace GroupA.FolksOpinion.UI.Models
         protected bool ValidateKeys()
         {
             return ValidateKeys(consumerKey, consumerSecret);
-        }
-
-        /* Describes the Json object that Twitter sends 
-         * in exchange for bearer token credentials. 
-         */
-        private struct TwitterBearerTokenResponse
-        {
-            public string token_type {get; set;}
-            public string access_token {get; set;}
         }
     }
 

@@ -40,7 +40,7 @@ namespace GroupA.FolksOpinion.UI.Models
 
         private IEnumerable<Tweet> GetTweets (string subject)
         {
-            var source = new FolksOpinionTwitterApi();
+            var source = FolksOpinionTwitterApi.Instance;
             return source.GetTweets(subject);
         }
 

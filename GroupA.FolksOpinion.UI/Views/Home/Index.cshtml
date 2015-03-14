@@ -1,4 +1,6 @@
-﻿@{
+﻿@model GroupA.FolksOpinion.UI.Models.TrendingTopics
+
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -16,10 +18,14 @@
     <div id="separator"></div>
     <h2>Click a top trending<br />hashtag to analysis it.</h2>
     <ol id="hashtags">
-        <li>cats</li>
-        <li>dogs</li>
-        <li>fish</li>
-        <li>rabbits</li>
+        @foreach (var trend in Model.CurrentTrends)
+        {
+            @* 
+                trend.query reveals what to search Twitter for to retrieve trend.
+                May or may not be different from UrlEncode(trend.name)
+            *@
+            <li>@trend.name</li>
+        }
     </ol>
     <ul id="modalLinks">
         <li>about</li>
