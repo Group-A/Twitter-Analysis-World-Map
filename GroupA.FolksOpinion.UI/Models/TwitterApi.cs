@@ -180,9 +180,13 @@ namespace GroupA.FolksOpinion.UI.Models
             if (string.IsNullOrEmpty(response)) return "";
 
             // Check for errors.
-            dynamic responseObject = JObject.Parse(response);
-            if (responseObject.errors != null)
-                return "";
+            try { 
+                dynamic responseObject = new object();
+                responseObject = JObject.Parse(response); 
+                if (responseObject.errors != null)
+                    return "";
+            }
+            catch { /* Do nothing. */ }
 
             // Cache response.
             if (cache)
