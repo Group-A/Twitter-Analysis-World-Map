@@ -93,8 +93,9 @@ namespace GroupA.FolksOpinion.UI.Models
                 return trends;
 
             // Parse Trends.
-            var trendsPlaceResponse = JsonConvert.DeserializeObject<GetTrendsPlaceResponse>(trendsJson);
-            trends.AddRange(trendsPlaceResponse.trends);
+            // Trends responses are returned as a single cell JsonArray, for some reason.
+            var trendsPlaceResponse = JsonConvert.DeserializeObject<List<GetTrendsPlaceResponse>>(trendsJson);
+            trends.AddRange(trendsPlaceResponse[0].trends);
 
             return trends;
         }
