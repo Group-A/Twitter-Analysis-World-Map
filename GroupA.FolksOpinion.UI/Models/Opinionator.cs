@@ -51,8 +51,15 @@ namespace GroupA.FolksOpinion.UI.Models
             // Only tweets containing place information.
             var tweetsWithPlace = tweets.Where(t => t.place != null);
 
+            // Get opinions for tweets.
+            var opinionatedTweets = new List<TweetOpinion>();
             foreach (var tweet in tweetsWithPlace)
-                yield return analyser.AnalyseTweet(tweet);
+                opinionatedTweets.Add(analyser.AnalyseTweet(tweet));
+
+            // Filter tweets for non-neutral opinion.
+            return opinionatedTweets.Where(t => 
+                t.Opinion.NegativeBias != 0 &&
+                t.Opinion.PositiveBias != 0);
         }
 
         private IEnumerable<CountryOpinion> OpinionateCountries (IEnumerable<TweetOpinion> tweetOpinions)
