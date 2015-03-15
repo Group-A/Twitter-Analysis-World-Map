@@ -24,7 +24,7 @@
                 trend.query reveals what to search Twitter for to retrieve trend.
                 May or may not be different from UrlEncode(trend.name)
             *@
-            <li>@trend.name</li>
+            <li><a href="#" onclick="requestTopic('@trend.query')">@trend.name</a></li>
         }
     </ol>
     <ul id="modalLinks">

@@ -112,24 +112,6 @@ function parseJSONData(string)
 	sr.innerHTML += "</table>";*/
 }
 
-function getTags()
-{
-    var display = document.getElementById("hashtags");
-    var request = newRequest();
-    var url = "insert end point";
-    request.open("GET", url, true);
-    request.setRequestHeader("Content-Type", "application/json");
-    request.withCredentials = true;
-    request.onload = function (e) {
-        var callback = JSON.parse(request.response);
-        for (var i in callback.trends) {
-            var hashtag = callback.trends[i].name;
-            display.innerHTML += "<li><a href='#' onclick='requestTopic(\""+callback.trends[i].query+"\")'>"+hashtag+"</a></li>";
-        }
-    }.bind(this);
-    request.send();
-}
-
 function searchCustomTerm(event) {
 	if(event.keyCode == 13) {
 		var topic = document.getElementById("customSearchTermField").value;
