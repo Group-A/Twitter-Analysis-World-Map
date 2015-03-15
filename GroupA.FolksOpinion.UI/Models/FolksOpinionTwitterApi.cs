@@ -73,8 +73,7 @@ namespace GroupA.FolksOpinion.UI.Models
                         + tweetSearchResponse.search_metadata.next_results);
                     tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
                     try { tweets.AddRange(tweetSearchResponse.statuses); }
-                    catch (System.ArgumentNullException) { break; }
-                        
+                    catch { break; }
                 }
             }
             
