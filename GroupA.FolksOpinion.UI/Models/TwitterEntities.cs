@@ -27,6 +27,7 @@ namespace GroupA.FolksOpinion.UI.Models
      */
     public class Tweet
     {
+        public string created_at { get; set; }
         public string id_str { get; set; }
         public string lang { get; set; }
         public Place place { get; set; }
