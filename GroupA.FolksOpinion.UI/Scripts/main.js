@@ -25,9 +25,9 @@ $(function () {
 	openHashtagSelectionSidebarButton.click(toggleHashtagSelectionSidebarVisibility);
 	closeHashtagSelectionSidebarButton.click(toggleHashtagSelectionSidebarVisibility);
 
-	$('#hashtagSelectionSidebar #hashtags li').click(function () {
+	/*$('#hashtagSelectionSidebar #hashtags li').click(function () {
 		alert('Hashtag \"' + $(this).text() + '\" was selected.');
-	});
+	});*/
 
 	$('#hashtagSelectionSidebar #modalLinks li').click(function () {
 		var modalElement = $('#' + $(this).text() + 'ModalBox');

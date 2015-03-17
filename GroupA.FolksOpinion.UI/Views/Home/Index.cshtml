@@ -15,8 +15,6 @@
 
 <div id="hashtagSelectionSidebar">
     <h1>Folk&apos;s Opinion</h1>
-    <div id="separator"></div>
-    <h2>Click on a trending topic to see the world's opinions</h2>
     <ol id="hashtags">
         @foreach (var trend in Model.CurrentTrends)
         {
@@ -40,13 +38,16 @@
 
 <div id="aboutModalBox" class="modalBox">
     <h1>About</h1>
-    <div class="separator"></div>
-    <p>About content.</p>
+    <h3>Developed By Group A &#40;Gary Fernie&#44; Michael Rodenhurst&#44; Jools Reid&#44; Jamie Aitken&#44; Liam Smith&#41;</h3>
+    <p>Developed for University Group Task which was &#34;Big Data Visualization&#34;</p>
+    <p>Educational Purposes Only</p>
 </div>
 <div id="helpModalBox" class="modalBox">
     <h1>Help</h1>
-    <div class="separator"></div>
-    <p>Help content.</p>
+    <ul>
+        <li>Click a Top Trending Item or enter your own query</li>
+        <li>If enough results are returned, each country will be coloured in to show their attitude on the topic</li>
+    </ul>
 </div>
 <div id="optionsModalBox" class="modalBox">
     <h1>Colour Scheme</h1>
