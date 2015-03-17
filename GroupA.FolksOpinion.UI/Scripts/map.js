@@ -86,7 +86,6 @@ function requestTopic(topic) {
     request.onload = function (e) {
         searchField.style.backgroundImage = "~/Content/Images/customSearchTermFieldBackground.png";
         parseJSONData(request.response);
-        console.log(request.response);
         renderMap();
     }.bind(this);
 
