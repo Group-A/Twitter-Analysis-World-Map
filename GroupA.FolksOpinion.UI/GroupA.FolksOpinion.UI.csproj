@@ -144,9 +144,11 @@
     <Content Include="Content\main.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\gl-matrix.js" />
     <Content Include="Scripts\jQuery.js" />
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\map.js" />
+    <Content Include="Scripts\webgl.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
