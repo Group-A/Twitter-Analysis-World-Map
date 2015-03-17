@@ -40,10 +40,13 @@
     void main(void)
     {
         gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-        gl_FragColor -= (gradient/4.0);
-        gl_FragColor.r -= (gradient/8.0);
-        gl_FragColor.b += (gradient/8.0);
-        gl_FragColor += min(max(light, -0.5), 1.0) + 0.5;
+        if(gl_FragColor.a < 0.1)
+        {
+            gl_FragColor -= (gradient/4.0);
+            gl_FragColor.r -= (gradient/8.0);
+            gl_FragColor.b += (gradient/8.0);
+            gl_FragColor += min(max(light, -0.5), 1.0) + 0.5;
+        }
     }
 </script>
 
