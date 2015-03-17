@@ -136,8 +136,12 @@ function useShader(shader) {
     shader.texturePositionAttribute = gl.getAttribLocation(shader, "aTexturePosition");
     gl.enableVertexAttribArray(shader.texturePositionAttribute);
 
+    shader.normalPositionAttribute = gl.getAttribLocation(shader, "aNormalPosition");
+    gl.enableVertexAttribArray(shader.normalPositionAttribute);
+
     shader.pMatrixUniform = gl.getUniformLocation(shader, "uPMatrix");
     shader.mvMatrixUniform = gl.getUniformLocation(shader, "uMVMatrix");
+    shader.nMatrixUniform = gl.getUniformLocation(shader, "uNMatrix");
 
     activeShader = shader;
 }
@@ -149,15 +153,20 @@ function arrayPush(dest, source) {
 
 function buildSphere() {
     vertices = [];
+    normals = [];
     indices = [];
     textureCoords = [];
 
-    vSegs = 16;
-    hSegs = 16;
+    vSegs = 32;
+    hSegs = 32;
 
     for (var i = 0; i <= vSegs; ++i)
         for (var t = 0; t <= hSegs; ++t) {
             arrayPush(vertices, [Math.cos((t / (hSegs)) * Math.PI * 2) * Math.sin((i / vSegs / 2) * 2 * Math.PI),
+								 Math.cos((i / vSegs / 2) * Math.PI * 2),
+								 Math.sin((t / hSegs) * Math.PI * 2) * Math.sin((i / vSegs / 2) * 2 * Math.PI)]);
+
+            arrayPush(normals, [Math.cos((t / (hSegs)) * Math.PI * 2) * Math.sin((i / vSegs / 2) * 2 * Math.PI),
 								 Math.cos((i / vSegs / 2) * Math.PI * 2),
 								 Math.sin((t / hSegs) * Math.PI * 2) * Math.sin((i / vSegs / 2) * 2 * Math.PI)]);
         }
@@ -182,7 +191,7 @@ function buildSphere() {
 					   clamp(y, 0, 1)]);
         }
 
-    return new Model(vertices, indices, textureCoords);
+    return new Model(vertices, indices, textureCoords, normals);
 }
 
 function clamp(number, min, max) {
@@ -209,6 +218,9 @@ function drawWorld(delta) {
 
         gl.uniformMatrix4fv(mapShader.pMatrixUniform, false, pMatrix);
         gl.uniformMatrix4fv(mapShader.mvMatrixUniform, false, mvMatrix);
+        var nMatrix = mat3.create();
+        mat3.normalFromMat4(nMatrix, mvMatrix);
+        gl.uniformMatrix3fv(mapShader.nMatrixUniform, false, nMatrix);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, sphere.positionBuffer);
         gl.vertexAttribPointer(mapShader.vertexPositionAttribute,
@@ -218,6 +230,11 @@ function drawWorld(delta) {
         gl.bindBuffer(gl.ARRAY_BUFFER, sphere.texturePosBuffer);
         gl.vertexAttribPointer(mapShader.texturePositionAttribute,
 							   sphere.texturePosBuffer.itemSize,
+							   gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, sphere.normalBuffer);
+        gl.vertexAttribPointer(mapShader.normalPositionAttribute,
+							   sphere.normalBuffer.itemSize,
 							   gl.FLOAT, false, 0, 0);
 
         bindTexture(mapTexture);
@@ -331,6 +348,12 @@ function Model(vertices, indices, textureCoords, normals) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
     this.texturePosBuffer.itemSize = 2;
     this.texturePosBuffer.numItems = textureCoords.length / this.texturePosBuffer.itemSize;
+
+    this.normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+    this.normalBuffer.itemSize = 3;
+    this.normalBuffer.numItems = normals.length / this.normalBuffer.itemSize;
 }
 
 Model.prototype =

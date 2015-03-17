@@ -276,7 +276,7 @@ function drawCountry(ctx, country) {
 }
 
 function drawRawMap(canvas, ctx) {
-
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
 
     var hScale = canvas.width / mapWidth,

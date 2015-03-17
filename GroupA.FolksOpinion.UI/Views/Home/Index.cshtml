@@ -7,16 +7,24 @@
 <script id="mapVert" type="x-shader/x-vertex">
     attribute vec3 aVertexPosition;
     attribute vec2 aTexturePosition;
+    attribute vec3 aNormalPosition;
 
     uniform mat4 uMVMatrix;
     uniform mat4 uPMatrix;
+    uniform mat3 uNMatrix;
 
     varying vec2 vTextureCoord;
+    varying float gradient;
+    varying float light;
 
     void main(void)
     {
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
         vTextureCoord = aTexturePosition;
+        gradient = gl_Position.y - 0.1;
+        vec3 normal = uNMatrix * aNormalPosition;
+        vec3 lightDirection = vec3(0.0, 0.0, 1.0);
+        light = -max(dot(normal, lightDirection), 0.0);
     }
 </script>
 
@@ -24,12 +32,18 @@
     precision mediump float;
 
     varying vec2 vTextureCoord;
+    varying float gradient;
+    varying float light;
 
     uniform sampler2D uSampler;
 
     void main(void)
     {
         gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+        gl_FragColor -= (gradient/4.0);
+        gl_FragColor.r -= (gradient/8.0);
+        gl_FragColor.b += (gradient/8.0);
+        gl_FragColor += min(max(light, -0.5), 1.0) + 0.5;
     }
 </script>
 
