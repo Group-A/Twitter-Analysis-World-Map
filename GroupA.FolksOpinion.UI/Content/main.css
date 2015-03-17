@@ -22,6 +22,10 @@ h1, h2 {
     display:                               none;
 }
 
+.hashtags:visited{
+    color:                                 rgba(255,255,255,0);
+}
+
 /* Map Container */
 #mapContainer {
 	width:                                 100%;

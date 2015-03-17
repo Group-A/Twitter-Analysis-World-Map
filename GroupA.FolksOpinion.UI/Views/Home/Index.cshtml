@@ -16,7 +16,7 @@
 <div id="hashtagSelectionSidebar">
     <h1>Folk's<br />Opinion</h1>
     <div id="separator"></div>
-    <h2>Click a top trending<br />hashtag to analysis it.</h2>
+    <h2>Click on a trending topic to see the world's opinions</h2>
     <ol id="hashtags">
         @foreach (var trend in Model.CurrentTrends)
         {
@@ -24,7 +24,7 @@
                 trend.query reveals what to search Twitter for to retrieve trend.
                 May or may not be different from UrlEncode(trend.name)
             *@
-            <li><a href="#" onclick="requestTopic('@trend.query')">@trend.name</a></li>
+            <li><a href="#" class="hashtags" onclick="requestTopic('@trend.query')">@trend.name</a></li>
         }
     </ol>
     <ul id="modalLinks">
