@@ -34,6 +34,7 @@
     varying vec2 vTextureCoord;
     varying float gradient;
     varying float light;
+    //varying float shadow;
 
     uniform sampler2D uSampler;
 
@@ -42,9 +43,16 @@
         gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
         if(gl_FragColor.a < 0.1)
         {
+            // Gradient
             gl_FragColor -= (gradient/4.0) + 0.15;
             gl_FragColor.b += (gradient/16.0);
             gl_FragColor.r -= (gradient/16.0);
+            
+            // Shadow
+            gl_FragColor.a -= min(max(light, -0.4), 2.0);
+            gl_FragColor.rgb += light;
+
+            // Light
             gl_FragColor += min(max(light, -0.5)*1.5, 1.0) + 0.5;
         }
     }
