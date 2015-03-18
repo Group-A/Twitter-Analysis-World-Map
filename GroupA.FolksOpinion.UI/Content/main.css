@@ -48,7 +48,7 @@ a {
 #hashtagSelectionSidebar {
 	padding:                               45px;
 	width:                                 300px;
-	background:                            rgba(0, 0, 0, 0.2);
+	background:                            rgba(26, 48, 84, 0.5);
 	position:                              absolute;
 	top:                                   0px;
 	left:                                  0px;
@@ -60,14 +60,6 @@ a {
 	font-size:                             32px;
 	text-transform:                        uppercase;
 	text-shadow:                           2px 2px rgba(0,0,0,0.5);
-}
-
-#hashtagSelectionSidebar #separator {
-	margin:                                5px 0px 0px 0px;
-	width:                                 140px;
-	height:                                6px;
-	background:                            #FFF;
-	box-shadow:                            0px 1px 0px #007C9E;
 }
 
 #hashtagSelectionSidebar h2 {
@@ -93,6 +85,7 @@ a {
 #hashtagSelectionSidebar #hashtags li {
 	margin:                                15px 0px 0px 0px;
 	padding:                               15px 0px 0px 0px;
+    font-size:                             14px;
 	text-align:                            right;
 	border-top:                            1px dotted rgba(255, 255, 255, 0.3);
     text-shadow:                           0px 0px 7px rgba(0,0,0,0.75);
@@ -105,14 +98,18 @@ a {
 	padding:                               15px 15px 15px 45px;
 	margin:                                20px 0px 0px 0px;
 	width:                                 240px;
-	background:                            rgba(1, 1, 1, 0.1) url('/Content/Images/customSearchTermFieldBackground.png') no-repeat 50%;
+	background:                            rgba(255, 255, 255, 0.1) url('/Content/Images/customSearchTermFieldBackground.png') no-repeat 50%;
 	outline:                               none;
-	font-size:                             20px;
+	font-size:                             16px;
 	color:                                 #FFF;
 	border:                                none;
 	border-radius:                         2px;
 	transition:                            background 0.5s;
 	text-align:                            left;
+}
+
+::-webkit-input-placeholder{
+    color:                                 #FFF;
 }
 
 #hashtagSelectionSidebar #customSearchTermField:focus {
@@ -121,14 +118,16 @@ a {
 
 #hashtagSelectionSidebar #modalLinks {
 	width:                                 300px;
-	font-size:                             12px;
+	font-size:                             16px;
 	padding-bottom:                        0.63em;
 	padding-top:                           0.63em;
+    text-shadow:                           0px 0px 7px rgba(0,0,0,0.75);
 }
 
 #hashtagSelectionSidebar #modalLinks li {
 	display:                               inline;
 	cursor:                                pointer;
+
 }
 
 #hashtagSelectionSidebar #modalLinks li:last-child {
