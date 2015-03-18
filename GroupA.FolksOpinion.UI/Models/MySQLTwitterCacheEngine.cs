@@ -11,17 +11,16 @@
  *              - Stubbed to allow build.
  *              25th February 2015, Jamie Aitken
  *              - Fleshed out stubs
+ *              5th March 2015, Michael Rodenhurst
+ *              - Changed everything
  *              
- * Todo:        - Make Insert Dynamic
- *              - Remove the prefix from types i.e System.String, FolksOpinion.Place
- *              - Decide on design of initial database, I'm thinking Place table and Opinion table should have an id_str
+ * Issues:      - 
  */
 
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Web;
 
@@ -30,182 +29,152 @@ namespace GroupA.FolksOpinion.UI.Models
     public class MySQLTwitterCacheEngine : TwitterCacheEngine
     {
         MySQLInterface sql;
-        PropertyInfo[] tweetProp = typeof(Tweet).GetProperties();
-        PropertyInfo[] placeProp = typeof(Place).GetProperties();
-        PropertyInfo[] TWProp = typeof(TweetOpinion).GetProperties();
-        PropertyInfo[] opinionProp = typeof(Opinion).GetProperties();
 
         public MySQLTwitterCacheEngine()
         {
             /* Get SQL config variables */
-            String host = ConfigurationManager.AppSettings["mysql_cache_host"];
-            String database = ConfigurationManager.AppSettings["mysql_cache_database"];
-            String user = ConfigurationManager.AppSettings["mysql_cache_user"];
-            String password = ConfigurationManager.AppSettings["mysql_cache_password"];
+            String host = ConfigurationManager.AppSettings["MySQL_CacheHost"];
+            String database = ConfigurationManager.AppSettings["MySQL_CacheDatabase"];
+            String user = ConfigurationManager.AppSettings["MySQL_CacheUser"];
+            String password = ConfigurationManager.AppSettings["MySQL_CachePassword"];
 
             /* Initialise SQL interface */
             sql = new MySQLInterface(host, database, user, password);
         }
 
-        public override void CacheTweet(TweetOpinion tweet)
+        public override void CacheTweets(IEnumerable<TweetOpinion> tweets)
         {
-            string place = "INSERT INTO " + typeof(Place) + " VALUES (";
-            string tweetO = "INSERT INTO " + typeof(Tweet) + " VALUES (";
-            string opinion = "INSERT INTO " + typeof(Opinion) + " VALUES (";
-            place += "" + tweet.Tweet.place.country + ", "+tweet.Tweet.place.country_code;
-            tweetO += "" + tweet.Tweet.id_str + ", " + tweet.Tweet.lang + ", " + tweet.Tweet.place + ", " + tweet.Tweet.text;
-            opinion += "" + tweet.Opinion.PositiveBias + ", " + tweet.Opinion.NegativeBias;
-          
+            if (tweets == null) // Don't handle invalid dataset.
+                return;
 
-            place += ");";
-            tweetO += ");";
-            opinion += ");";
-            //sql.SendQuery(tweetO);
-            //sql.SendQuery(place);
-            //sql.SendQuery(opinion);
+            foreach (TweetOpinion tweet_opinion in tweets)
+                InsertObject(tweet_opinion);
         }
 
-        public override void UncacheTweet(String id)
+        public override IEnumerable<TweetOpinion> GetTweets(string subject)
         {
-            string deleteTweet = "DELETE FROM " + typeof(Tweet).Name + " WHERE ";
-            string deletePlace = "DELETE FROM " + typeof(Place).Name + " WHERE ";
-            string deleteOpinion = "DELETE FROM " + typeof(Opinion).Name + "WHERE ";
-            foreach(var property in tweetProp)
-            {
-                if(property.Name.Contains("id_str"))
-                {
-                    deleteTweet += "" + property.Name + " = " + id + ";";
-                }
-            }
-            foreach(var property in placeProp)
-            {
-                if(property.Name.Contains("id_str"))
-                {
-                    deletePlace += "" + property.Name + " = " + id + ";";
-                }
-            }
-            foreach(var property in opinionProp)
-            {
-                if(property.Name.Contains("id_str"))
-                {
-                    deleteOpinion += "" + property.Name + " = " + id + ";";
-                }
-            }
+            if (string.IsNullOrEmpty(subject)) // Ignore invalid subject
+                return null;
 
-            //sql.SendQuery(deleteTweet);
-            //sql.SendQuery(deletePlace);
-            //sql.SendQuery(deleteOpinion);
+            /* FIXME: This is a manual select query - not dynamic. Must find a way to
+             * dynamically specify the target field (TweetOpinion.Tweet.Text atm) */
+            MySqlDataReader reader = sql.Select(typeof(Tweet).Name, "text LIKE " + subject, null);
+
+            // For each record in reader result
+            //   Build Tweet object from Tweet table record
+            //   Iterate over TweetOpinion structure
+            //      For each (sub)property, select table from database WHERE __id == tweet record id
+            //   Append assembled TweetOpinion to TweetOpinion list
+            // Return list
+
+            /* Iterate over all fields of TweetOpinion */
+
+            throw new NotImplementedException();
+
+            return null;
         }
 
-        public override TweetOpinion GetTweet(String id)
+        public override bool ValidateCache(Type type)
         {
-            return new TweetOpinion();
+            throw new NotImplementedException();
         }
 
-        public override CacheResult GetTweetsFromCache(String subject) // Empty subject gets all tweets
+        /* Private functions used internally */
+
+        /* Creates the required table structure by converting the passed Type to sql tables.
+         * Object references become foreign keys */
+        private void CreateTableStructure(Type type)
         {
-            if(subject!="" && subject!=null)
+            CreateTable(type);
+        }
+
+        /* Helper functions */
+
+        /* Inserts the provided object into SQL table. Also inserts any sub-objects
+         * required during iteration */
+        /* Returns the unique ID of the created SQL record for FK association*/
+        private int InsertObject(Object item)
+        {
+            List<Tuple<string, string>> columns = new List<Tuple<string, string>>();
+
+            /* Iterate over all fields of the provided item */
+            foreach (PropertyInfo prop in item.GetType().GetProperties())
             {
-                foreach(var prop in tweetProp)
-                {
-                    if(prop.Name.Contains("subject"))
-                    {
-                        //sql.SendQuery("SELECT * FROM " + typeof(Tweet).Name + " WHERE " + prop.Name + " = " + subject + ";");
-                    }
-                }
+                string field_name = prop.Name;
+                Object field_value = prop.GetValue(item);
+
+                if (UserDefinedStruct(field_value.GetType()))
+                    field_value = InsertObject(field_value);
+
+                columns.Add(new Tuple<string, string>(field_name, "" + field_value));
             }
-            else
+
+            sql.InsertRow(item.GetType().Name, columns); // Insert row into table
+
+            /* Get ID of row we just inserted. Note: Probably not thread safe */
+            List<string> column = new List<string>();
+            column.Add("MAX(__UID)");
+            MySqlDataReader reader = sql.Select(item.GetType().Name, null, column);
+
+            return reader.GetInt32(0); // TODO: null handling
+        }
+        
+        /* Creates the specified table, also creates any necessary sub-tables */
+        private void CreateTable(Type type)
+        {
+            List<Tuple<string, string, string>> rows = new List<Tuple<string, string, string>>();
+            rows.Add(new Tuple<string, string, string>("__UID", "int", "AUTO_INCREMENT")); // DB UID - Not to be confused with data structure ids
+
+
+            foreach (PropertyInfo prop in type.GetProperties())
             {
-                //sql.SendQuery("SELECT * FROM " + typeof(Tweet).Name + ";");
-                //sql.SendQuery("SELECT * FROM " + typeof(Place).Name + ";");
-                //sql.SendQuery("SELECT * FROM " + typeof(Opinion).Name + ";");
+                if (UserDefinedStruct(prop.PropertyType))
+                    CreateTable(prop.PropertyType);
+
+                rows.Add(new Tuple<string, string, string>(prop.Name, GetSQLDataType(prop.PropertyType), null));
             }
-            return new CacheResult();
+
+            // Create table
+            sql.CreateTable(type.Name, rows);
+
+            /* Mark foreign keys */
+            foreach (PropertyInfo prop in type.GetProperties())
+                if (UserDefinedStruct(prop.PropertyType))
+                    sql.SetForeignKey(type.Name, prop.Name, prop.PropertyType.Name, "__UID");
         }
 
-        public override void FlushCache() // Clears the cache
+        /* Returns true if the passed type is a user-defined struct,
+         * rather than a "standard" built-in/library type. */
+        private bool UserDefinedStruct(Type type)
         {
-            //sql.SendQuery("TRUNCATE TABLE " + typeof(Tweet).Name + "");
-            //sql.SendQuery("TRUNCATE TABLE " + typeof(Place).Name + "");
-            //sql.SendQuery("TRUNCATE TABLE " + typeof(Opinion).Name + "");
+           return type.IsValueType && !type.IsPrimitive;
         }
 
-        private bool CreateTableStructure()
+        /* Horrible function that converts a C# basic datatype (including box wrappers)
+         * to a MySQL string-type (ie. 'int') */
+        private string GetSQLDataType(Type type)
         {
-            string createTweetTable = "CREATE TABLE " + typeof(Tweet).Name+" (";
-            string createPlaceTable = "CREATE TABLE " + typeof(Place).Name +" (";
-            string createOpinionTable = "CREATE TABLE " + typeof(Opinion).Name+" (";
-            string createTweetOpinionTable = "CREATE TABLE" + typeof(TweetOpinion).Name + " (";
-            foreach(var rootProperty in TWProp)
+            if(UserDefinedStruct(type))
+                return "int";   // Foreign keys are ints
+
+            return null;
+        }
+
+        /* Recursively iterates over all sub-types in the passed Type (if it's a structure) 
+         * and returns a list */
+        private List<Tuple<Type, string>> GetObjectTypes(Type type)
+        {
+            List<Tuple<Type, string>> types = new List<Tuple<Type, string>>();
+
+            foreach(PropertyInfo prop in type.GetProperties())
             {
-                foreach(var tweetPro in tweetProp)
-                {
-                    if(rootProperty.PropertyType.Equals(tweetPro.ReflectedType))
-                    {
-                        foreach (var placePro in placeProp)
-                        {
-                            if(tweetPro.PropertyType.Equals(placePro.ReflectedType))
-                            {
-                                if(placeProp.Length>1)
-                                {
-                                    createPlaceTable += "" + placePro.Name + " " + placePro.PropertyType + ",";
-                                }
-                                else
-                                {
-                                    createPlaceTable += "" + placePro.Name + " " + placePro.PropertyType + "";
-                                }
-                            }
-                        }
-                    }
-                    if (tweetProp.Length > 1)
-                    {
-                        createTweetTable += "" + tweetPro.Name + " " + tweetPro.PropertyType + ",";
-                    }
-                    else
-                    {
-                        createTweetTable += "" + tweetPro.Name + " " + tweetPro.PropertyType + "";
-                    }
-                }
-                foreach(var opinProp in opinionProp)
-                {
-                    if(rootProperty.PropertyType.Equals(opinProp))
-                    {
-                        if(opinionProp.Length>1)
-                        {
-                            createOpinionTable += "" + opinProp.Name + " " + opinProp.PropertyType + ",";
-                        }
-                        else
-                        {
-                            createOpinionTable += "" + opinProp.Name + " " + opinProp.PropertyType + "";
-                        }
-                        
-                    }
-                }
-                if(TWProp.Length>1)
-                {
-                    createTweetOpinionTable += "" + rootProperty.Name + " " + TWProp.Length + ",";
-                }
+                if (UserDefinedStruct(prop.PropertyType))
+                    types.AddRange(GetObjectTypes(type));
                 else
-                {
-                    createTweetOpinionTable += "" + rootProperty.Name + " " + TWProp.Length + "";
-                }
+                    types.Add(new Tuple<Type, string>(prop.PropertyType, prop.Name));
             }
-            createTweetTable += ");";
-            createPlaceTable += ");";
-            createOpinionTable += ");";
-            createTweetOpinionTable += ");";
-            if (createTweetTable != null && createPlaceTable != null && createOpinionTable != null && createTweetOpinionTable!=null)
-            {
-                //sql.SendQuery(createTweetTable + createPlaceTable + createOpinionTable + createTweetOpinionTable);
-                return true;
-            }
-            return false;
-        }
 
-        private bool ValidateTableStructure()
-        {
-            return false;
+            return types;
         }
-
     }
 }

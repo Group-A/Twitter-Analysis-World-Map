@@ -2,8 +2,7 @@
  * Purpose:     Generic interface to connect to a MySQL backend.
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
- * Exposes:     CreateDatabase, DropDatabase, CreateTable, DropTable,
- *              RenameTable, InsertRow, UpdateRow, DeleteRow, Select
+ * Exposes:     Exposition
  * 
  * Description: - Wraps any communication made to a MySql
  *              - backend.
@@ -136,6 +135,25 @@ namespace GroupA.FolksOpinion.UI.Models
             return exception == null ? true : false;
         }
 
+        /* Marks the specified row in the specified table as a foreign key, pointing to the target row */
+        public bool SetForeignKey(string table_src, string row_src, string table_target, string row_target)
+        {
+            if (!ValidateConnection())
+                return false;
+
+            /* Basic input validation */
+            if (string.IsNullOrEmpty(table_src) || string.IsNullOrEmpty(row_src) ||
+                   string.IsNullOrEmpty(table_target) || string.IsNullOrEmpty(row_target))
+                return false;
+
+            string query = "ALTER TABLE " + table_src + " ADD FOREIGN KEY (" + row_src + ") REFERENCES " +
+                    table_target + "(" + row_target + ")";
+
+            MySqlException exception = ExecuteNonQuery(query);
+
+            return exception == null ? true : false;
+        }
+
         /* Renames a table from the specified table_old_name to table_new_name 
          * Returns true on success */
         public bool RenameTable(string table_old_name, string table_new_name)
@@ -232,7 +250,7 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Deletes a row from the specified table_name using the
-         * provided identifier as the where clause
+         * provided identifier as the where clause.
          * Returns true on success */
         public bool DeleteRow(string table_name, string identifier)
         {
@@ -251,8 +269,7 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Returns the contents of an SQL select query as a MySqlDataReader object.
-         * The where clause is specified as the identifier.
-         * Pass identifier as null to specify no where clause
+         * 'where' clause is specified as the identifier. Pass identifier as null to specify no clause
          * The list of columns to return is specified in the columns enumerable.
          * Selects all columns (*) if column enumerable is null.
          * Returns MySqlDataReader object on success, null on failure. */

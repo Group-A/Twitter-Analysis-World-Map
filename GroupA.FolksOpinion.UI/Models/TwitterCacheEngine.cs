@@ -22,22 +22,14 @@ namespace GroupA.FolksOpinion.UI.Models
 {
     public abstract class TwitterCacheEngine
     {
+        /* Caches the provided array of TweetOpinions */
+        public abstract void CacheTweets(IEnumerable<TweetOpinion> tweets);
 
-        public struct CacheResult
-        {
-            TweetOpinion[] tweets;
-        }
+        /* Returns all cached tweets associated with the provided subject */
+        public abstract IEnumerable<TweetOpinion> GetTweets(string subject);
 
-        protected ObjectCache cache = MemoryCache.Default;
-
-        public abstract void CacheTweet(TweetOpinion tweet);
-
-        public abstract void UncacheTweet(String id);
-
-        public abstract TweetOpinion GetTweet(String id);
-
-        public abstract CacheResult GetTweetsFromCache(String subject); // Empty subject gets all tweets
-
-        public abstract void FlushCache(); // Clears the cache
+        /* Checks the cache validity against the provided data structure
+         * Returns true on successful validation */
+        public abstract bool ValidateCache(Type type);
     }
 }
