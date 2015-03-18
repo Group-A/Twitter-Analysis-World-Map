@@ -54,7 +54,7 @@ function parseJSONData(string) {
     var data = JSON.parse(string);
     if (data.CountryOpinions == "")
     {
-        alert("Not enough data was gathered");
+        alert("Not enough data was gathered "+decodeURI(data.Subject));
     }
     else
     {
