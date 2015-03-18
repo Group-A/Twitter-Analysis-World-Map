@@ -265,7 +265,7 @@ function webGLStart() {
 					       document.getElementById("mapVert").innerHTML);
     useShader(mapShader);
 
-    gl.clearColor(0, 138 / 255, 168/255, 168);
+    gl.clearColor(2/255, 98 / 255, 138/255, 1);
     gl.enable(gl.DEPTH_TEST);
 
     onGLCanvasResized();
