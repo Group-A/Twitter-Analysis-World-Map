@@ -16,17 +16,20 @@ $(function () {
 	// Resize the hashtag selection sidebar.
 	resizeHashtagSelectionSidebar();
 
+	// Handle colour scheme selections.
+	populateOptionsModalBox();
+
 	// Initialise event listeners.
 	$(window).resize(resizeHashtagSelectionSidebar);
 
 	openHashtagSelectionSidebarButton.click(toggleHashtagSelectionSidebarVisibility);
 	closeHashtagSelectionSidebarButton.click(toggleHashtagSelectionSidebarVisibility);
 
-	$('#hashtags li').click(function () {
+	/*$('#hashtagSelectionSidebar #hashtags li').click(function () {
 		alert('Hashtag \"' + $(this).text() + '\" was selected.');
-	});
+	});*/
 
-	$('#modalLinks li').click(function () {
+	$('#hashtagSelectionSidebar #modalLinks li').click(function () {
 		var modalElement = $('#' + $(this).text() + 'ModalBox');
 
 		displayElementModally(modalElement);
@@ -36,6 +39,10 @@ $(function () {
 		var modalElement = $('#optionsModalBox');
 
 		displayElementModally(modalElement);
+	});
+
+	$('#optionsModalBox .colourScheme').click(function () {
+		changeColourScheme(this);
 	});
 });
 
@@ -112,7 +119,7 @@ function removeModalElement() {
 			modalFreezeFrame.fadeOut(function () {
 				modalElementPresent = false;
 				modalElement = null;
-				
+
 				body.css('overflow', 'auto'); // Unlock body, allow scrolling.
 			});
 		});
@@ -125,4 +132,49 @@ function centreElement(element) {
 	var newLeftPosition = (($(window).width() - element.outerWidth()) / 2) + 'px';
 
 	element.css({'position': 'absolute', 'top': newTopPosition, 'left': newLeftPosition});
+}
+
+// Handle colour scheme selection.
+var colourSchemes = [
+	['009EC3', '18DB8D', 'E32967'],
+	['555', 'E872C5', 'F2E65C']
+];
+
+function populateOptionsModalBox() {
+	for(colourSchemeIndex = 0; colourSchemeIndex < colourSchemes.length; colourSchemeIndex++) {
+		var colourScheme = $('<div />', {
+			'class': 'colourScheme',
+			'id': 'colourScheme' + colourSchemeIndex
+		});
+
+		$('#optionsModalBox').append(colourScheme);
+
+		for(colourIndex = 0; colourIndex < 3; colourIndex++) {
+			var colourBlock = $('<div />', {'class': 'colourBlock'});
+
+			switch(colourIndex) {
+				case 0:
+					colourBlock.html('map<br />background');
+
+					break;
+
+				case 1:
+					colourBlock.html('postive<br />countries');
+
+					break;
+
+				case 2:
+					colourBlock.html('negative<br />countries');
+
+					break;
+			}
+
+			colourBlock.css('background', '#' + colourSchemes[colourSchemeIndex][colourIndex]);
+			colourScheme.append(colourBlock);
+		}
+	}
+}
+
+function changeColourScheme(colourScheme) {
+	alert('Colour scheme #' + $(colourScheme).attr('id') + ' selected.');
 }

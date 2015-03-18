@@ -1,6 +1,5 @@
 ﻿/* File:        TwitterCacheEngine.cs
  * Purpose:     Abstract class to define how Twitter data will be cached
- * Version:     1.1
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
  * Exposes:     TwitterCacheEngine, TwitterCacheEngine.CacheResult
@@ -9,7 +8,7 @@
  *                any TwitterCacheEngine subclass so that they may be used elsewhere in
  *                the application.
  * 
- * Changes:     17th February 2015, ver 1.1, Gary Fernie
+ * Changes:     17th February 2015, Gary Fernie
  *              - Changed to use new opinion entities.
  */
 
@@ -23,22 +22,14 @@ namespace GroupA.FolksOpinion.UI.Models
 {
     public abstract class TwitterCacheEngine
     {
+        /* Caches the provided array of TweetOpinions */
+        public abstract void CacheTweets(IEnumerable<TweetOpinion> tweets);
 
-        public struct CacheResult
-        {
-            TweetOpinion[] tweets;
-        }
+        /* Returns all cached tweets associated with the provided subject */
+        public abstract IEnumerable<TweetOpinion> GetTweets(string subject);
 
-        protected ObjectCache cache = MemoryCache.Default;
-
-        public abstract void CacheTweet(Tweet tweet);
-
-        public abstract void UncacheTweet(String id);
-
-        public abstract TweetOpinion GetTweet(String id);
-
-        public abstract CacheResult GetTweetsFromCache(String subject); // Empty subject gets all tweets
-
-        public abstract void FlushCache(); // Clears the cache
+        /* Checks the cache validity against the provided data structure
+         * Returns true on successful validation */
+        public abstract bool ValidateCache(Type type);
     }
 }

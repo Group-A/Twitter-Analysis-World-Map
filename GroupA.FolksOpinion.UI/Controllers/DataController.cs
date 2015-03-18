@@ -14,14 +14,10 @@ namespace GroupA.FolksOpinion.UI.Controllers
         public JsonResult Opinion(string q)
         {
             var subject = q;
-            var result = "";
-            
             var opinionator = new Opinionator(subject);
             var worldOpinion = opinionator.WorldSubjectOpinion;
 
-            result = JsonConvert.SerializeObject(worldOpinion);
-
-            return Json(result, JsonRequestBehavior.AllowGet); ;
+            return Json(worldOpinion, JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -1,7 +1,7 @@
 /* Main Body Style */
 body {
 	margin:                                0px;
-	background:                            radial-gradient(#00B7EA, #009EC3);
+	background:                            #009EC3;
 	font-family:                           Arial, sans-serif;
 	font-size:                             20px;
 	color:                                 #FFF;
@@ -18,11 +18,37 @@ h1, h2 {
 	margin:                                0px;
 }
 
+a {
+	outline:                               none;
+	text-decoration:                       none;
+	color:                                 #FFF;
+}
+
+#process {
+	display:                               none;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+	width:			               6px;
+}
+
+::-webkit-scrollbar-thumb {
+	background:                            rgba(255, 255, 255, 0.3);
+	border-radius:                         4px;
+}
+
+/* Map Container */
+#mapContainer {
+	width:                                 100%;
+	overflow:                              hidden;
+}
+
 /* Hashtag Selection Sidebar */
 #hashtagSelectionSidebar {
 	padding:                               45px;
 	width:                                 300px;
-	background:                            rgba(0, 143, 183, 0.8);
+	background:                            rgba(0, 0, 0, 0.2);
 	position:                              absolute;
 	top:                                   0px;
 	left:                                  0px;
@@ -33,6 +59,7 @@ h1, h2 {
 	margin:                                0px;
 	font-size:                             32px;
 	text-transform:                        uppercase;
+	text-shadow:                           2px 2px rgba(0,0,0,0.5);
 }
 
 #hashtagSelectionSidebar #separator {
@@ -68,15 +95,35 @@ h1, h2 {
 	padding:                               15px 0px 0px 0px;
 	text-align:                            right;
 	border-top:                            1px dotted rgba(255, 255, 255, 0.3);
-	cursor:                                pointer;
+    text-shadow:                           0px 0px 7px rgba(0,0,0,0.75);
+	white-space:                           nowrap;
+	overflow:                              hidden;
+	text-overflow:                         ellipsis;
+}
+
+#hashtagSelectionSidebar #customSearchTermField {
+	padding:                               15px 15px 15px 45px;
+	margin:                                20px 0px 0px 0px;
+	width:                                 240px;
+	background:                            rgba(1, 1, 1, 0.1) url('/Content/Images/customSearchTermFieldBackground.png') no-repeat 50%;
+	outline:                               none;
+	font-size:                             20px;
+	color:                                 #FFF;
+	border:                                none;
+	border-radius:                         2px;
+	transition:                            background 0.5s;
+	text-align:                            left;
+}
+
+#hashtagSelectionSidebar #customSearchTermField:focus {
+	background-position:                   15px 50%;
 }
 
 #hashtagSelectionSidebar #modalLinks {
 	width:                                 300px;
-	position:                              absolute;
-	left:                                  45px;
-	bottom:                                45px;
 	font-size:                             12px;
+	padding-bottom:                        0.63em;
+	padding-top:                           0.63em;
 }
 
 #hashtagSelectionSidebar #modalLinks li {
@@ -90,7 +137,7 @@ h1, h2 {
 
 #hashtagSelectionSidebar #closeHashtagSelectionSidebarButton {
 	position:                              absolute;
-	top:                                   70px;
+	top:                                   45px;
 	right:                                 45px;
 	opacity:                               0.9;
 }
@@ -168,4 +215,22 @@ h1, h2 {
 	color:                                 #888;
 	text-align:                            justify;
 	line-height:                           28px;
+}
+
+/* Options Modal Box */
+#optionsModalBox .colourScheme {
+	margin:                                25px 0px 0px 0px;
+	overflow:                              auto;
+	cursor:                                pointer;
+}
+
+#optionsModalBox .colourScheme .colourBlock {
+	padding:                               35px 5px 5px 5px;
+	width:                                 189px;
+	text-align:                            right;
+	font-size:                             12px;
+	font-weight:                           bold;
+	color:                                 #FFF;
+	float:                                 left;
+	border-right:                          1px solid #FFF;
 }

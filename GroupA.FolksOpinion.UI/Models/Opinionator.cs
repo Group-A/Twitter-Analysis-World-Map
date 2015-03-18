@@ -1,6 +1,5 @@
 ﻿/* File:        Opinioniator.cs
  * Purpose:     Finds the world's opinion on a subject.
- * Version:     1.0
  * Created:     17th February 2015
  * Author:      Gary Fernie
  * Exposes:     Opinionator
@@ -38,7 +37,7 @@ namespace GroupA.FolksOpinion.UI.Models
 
         private IEnumerable<Tweet> GetTweets (string subject)
         {
-            var source = new FolksOpinionTwitterApi();
+            var source = FolksOpinionTwitterApi.Instance;
             return source.GetTweets(subject);
         }
 
@@ -49,8 +48,15 @@ namespace GroupA.FolksOpinion.UI.Models
             // Only tweets containing place information.
             var tweetsWithPlace = tweets.Where(t => t.place != null);
 
+            // Get opinions for tweets.
+            var opinionatedTweets = new List<TweetOpinion>();
             foreach (var tweet in tweetsWithPlace)
-                yield return analyser.AnalyseTweet(tweet);
+                opinionatedTweets.Add(analyser.AnalyseTweet(tweet));
+
+            // Filter tweets for non-neutral opinion.
+            return opinionatedTweets.Where(t => 
+                t.Opinion.NegativeBias != 0 &&
+                t.Opinion.PositiveBias != 0);
         }
 
         private IEnumerable<CountryOpinion> OpinionateCountries (IEnumerable<TweetOpinion> tweetOpinions)

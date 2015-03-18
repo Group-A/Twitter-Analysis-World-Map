@@ -39,12 +39,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data">
       <HintPath>..\packages\MySql.Data.6.9.5\lib\net45\MySql.Data.dll</HintPath>
@@ -125,18 +119,17 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Config.cs" />
     <Compile Include="Models\ILexicalBiasAnalyser.cs" />
     <Compile Include="Models\MySQLInterface.cs" />
     <Compile Include="Models\MySQLTwitterCacheEngine.cs" />
     <Compile Include="Models\Opinionator.cs" />
+    <Compile Include="Models\TrendingTopics.cs" />
     <Compile Include="Models\TweetAnalyser.cs" />
     <Compile Include="Models\TwitterCacheEngine.cs" />
     <Compile Include="Models\FolksOpinionTwitterApi.cs" />
     <Compile Include="Models\TwitterEntities.cs" />
     <Compile Include="Models\OpinionEntities.cs" />
     <Compile Include="Models\TwitterApi.cs" />
-    <Compile Include="Models\DatabaseModel.cs" />
     <Compile Include="Models\CumulativeBiasAnalyser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -147,18 +140,19 @@
     <Content Include="Content\Images\closeHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\openHashtagSelectionSidebarButton.png" />
     <Content Include="Content\Images\optionsButton.png" />
-    <Content Include="Content\Images\placeholderMap.png" />
-    <Content Include="Content\WorldMap.css" />
+    <Content Include="Content\Images\process.gif" />
+    <Content Include="Content\main.css" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\gl-matrix-min.js" />
     <Content Include="Scripts\jQuery.js" />
+    <Content Include="Scripts\main.js" />
     <Content Include="Scripts\map.js" />
-    <Content Include="Scripts\ui.js" />
-    <Content Include="Scripts\WorldMap.js" />
+    <Content Include="Scripts\webgl.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -169,19 +163,12 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <Content Include="Content\worldLow.svg" />
-    <None Include="Project_Readme.html" />
-    <None Include="Properties\PublishProfiles\Local File System.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,27 +1,104 @@
-﻿@{
+﻿@model GroupA.FolksOpinion.UI.Models.TrendingTopics
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-@Scripts.Render("~/Scripts/WorldMap.js")
-@Scripts.Render("~/Scripts/map.js")
+<script id="mapVert" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+    attribute vec2 aTexturePosition;
+    attribute vec3 aNormalPosition;
 
-@Styles.Render("~/Content/WorldMap.css")
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+    uniform mat3 uNMatrix;
+
+    varying vec2 vTextureCoord;
+    varying float gradient;
+    varying float light;
+
+    void main(void)
+    {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+        vTextureCoord = aTexturePosition;
+        gradient = gl_Position.y - 0.1;
+        vec3 normal = uNMatrix * aNormalPosition;
+        vec3 lightDirection = vec3(0.0, 0.0, 1.0);
+        light = -max(dot(normal, lightDirection), 0.0);
+    }
+</script>
+
+<script id="mapFrag" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec2 vTextureCoord;
+    varying float gradient;
+    varying float light;
+
+    uniform sampler2D uSampler;
+
+    void main(void)
+    {
+        gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+        if(gl_FragColor.a < 0.1)
+        {
+            gl_FragColor -= (gradient/4.0) + 0.15;
+            gl_FragColor.b += (gradient/16.0);
+            gl_FragColor.r -= (gradient/16.0);
+            gl_FragColor += min(max(light, -0.5)*1.5, 1.0) + 0.5;
+        }
+    }
+</script>
+
+@Scripts.Render("~/Scripts/main.js")
+@Scripts.Render("~/Scripts/gl-matrix-min.js")
+@Scripts.Render("~/Scripts/map.js")
+@Scripts.Render("~/Scripts/webgl.js")
+
+@Styles.Render("~/Content/main.css")
 
 <div id="mapContainer">
     <canvas id="map"></canvas>
 </div>
 
 <div id="hashtagSelectionSidebar">
-    <h1>Folk's<br />Opinion</h1>
-    <div id="separator"></div>
-    <h2>Click a top trending<br />hashtag to analysis it.</h2>
+    <h1>Folk&apos;s Opinion</h1>
     <ol id="hashtags">
-        <li>cats</li>
-        <li>dogs</li>
-        <li>fish</li>
-        <li>rabbits</li>
+        @foreach (var trend in Model.CurrentTrends)
+        {
+            @* 
+                trend.query reveals what to search Twitter for to retrieve trend.
+                May or may not be different from UrlEncode(trend.name)
+            *@
+            <li><a href="#" class="hashtags" onclick="requestTopic('@trend.query')">@trend.name</a></li>
+        }
     </ol>
-    <img src="~/Content/Images/closeHashtagSelectionSidebarButton.png" alt="Close Sidebar" id="closeHashtagSelectionSidebarButton" />
-></div>
+    <input type="text" id="customSearchTermField" onkeypress="searchCustomTerm(event)" placeholder="Search Twitter"/> <img src="~/Content/Images/process.gif" id="process"/>
+    <img src="~/Content/Images/closeHashtagSelectionSidebarButton.png" alt="Close Sidebar" id="closeHashtagSelectionSidebarButton" /> 
+    <ul id="modalLinks">
+        <li>About</li>
+        <li>Help</li>
+    </ul>
+</div>
 
 <img src="~/Content/Images/openHashtagSelectionSidebarButton.png" alt="Open Sidebar" id="openHashtagSelectionSidebarButton" />
+<img src="~/Content/Images/optionsButton.png" alt="Options" id="optionsButton" />
+
+<div id="AboutModalBox" class="modalBox">
+    <h1>About</h1>
+    <h3>Developed By Group A &#40;Gary Fernie&#44; Michael Rodenhurst&#44; Jools Reid&#44; Jamie Aitken&#44; Liam Smith&#41;</h3>
+    <p>Developed for University Group Task which was &#34;Big Data Visualization&#34;</p>
+    <p>Educational Purposes Only</p>
+</div>
+<div id="HelpModalBox" class="modalBox">
+    <h1>Help</h1>
+    <ul>
+        <li>Click a Top Trending Item or enter your own query</li>
+        <li>If enough results are returned, each country will be coloured in to show their attitude on the topic.
+            You can rotate the map using the arrow keys. Hold control and press up or down to zoom in and out.</li>
+    </ul>
+</div>
+<div id="optionsModalBox" class="modalBox">
+    <h1>Colour Scheme</h1>
+    <div class="separator"></div>
+</div>
