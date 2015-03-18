@@ -52,14 +52,21 @@ function parseJSONData(string) {
         countries[i].attitude = 0;
 
     var data = JSON.parse(string);
-
-    for (var i in data.CountryOpinions) {
-        var opinion = data.CountryOpinions[i];
-
-        countries[opinion.Country].attitude =
-			opinion.Opinion.PositiveBias
-		  - opinion.Opinion.NegativeBias;
+    if (data.CountryOpinions == "")
+    {
+        alert("Not enough data was gathered");
     }
+    else
+    {
+        for (var i in data.CountryOpinions) {
+            var opinion = data.CountryOpinions[i];
+
+            countries[opinion.Country].attitude =
+                opinion.Opinion.PositiveBias
+              - opinion.Opinion.NegativeBias;
+        }
+    }
+    
 }
 
 function searchCustomTerm(event) {
