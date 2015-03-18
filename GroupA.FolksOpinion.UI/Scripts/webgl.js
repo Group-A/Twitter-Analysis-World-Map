@@ -14,6 +14,7 @@
 var gl, glCanvas,
 	mapShader,
 	activeShader,
+    MAX_DELTA = 1 / 10,
 
 	mvMatrix = mat4.create(),
 	pMatrix = mat4.create(),
@@ -285,6 +286,8 @@ function drawLoop() {
     var currentTime = Date.now();
     var delta = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
+
+    delta = Math.min(delta, MAX_DELTA);
 
     worldTransform = mat4.create();
 
