@@ -110,8 +110,9 @@ h1, h2 {
 
 #hashtagSelectionSidebar #modalLinks {
 	width:                                 300px;
-	position:                              absolute;
 	font-size:                             12px;
+    padding-bottom:                        0.63em;
+    padding-top:                           0.63em;
 }
 
 #hashtagSelectionSidebar #modalLinks li {
