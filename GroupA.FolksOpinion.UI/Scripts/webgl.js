@@ -375,6 +375,7 @@ function drawLoop() {
     }
 	
 	worldPosition.targetZoom = clamp(worldPosition.targetZoom, 1, 100);
+	worldPosition.targetYAngle = clamp(worldPosition.targetYAngle, -1.1, 1.1);
 
     worldPosition.zoom += (worldPosition.targetZoom - worldPosition.zoom) * delta * 4;
     worldPosition.xAngle += (worldPosition.targetXAngle - worldPosition.xAngle) * delta * 4;
