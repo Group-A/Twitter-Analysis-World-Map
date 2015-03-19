@@ -120,7 +120,7 @@ function removeModalElement() {
 				modalElementPresent = false;
 				modalElement = null;
 
-				body.css('overflow', 'auto'); // Unlock body, allow scrolling.
+				body.removeAttr('style');
 			});
 		});
 	}

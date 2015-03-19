@@ -58,6 +58,7 @@ function parseJSONData(string) {
     }
     else
     {
+        createScreenReader(data);
         for (var i in data.CountryOpinions) {
             var opinion = data.CountryOpinions[i];
 
@@ -97,6 +98,16 @@ function requestTopic(topic) {
     }.bind(this);
 
     request.send();
+}
+
+function createScreenReader(data)
+{
+    var table = document.getElementById("reader");
+    for(var i in data.CountryOpinions)
+    {
+        var opinion = data.CountryOpinions[i];
+        table.innerHTML += "<tr><td>Country</td><td>" + opinion.Country + "</td><td>Attitude</td><td>" + (opinion.Opinion.PositiveBias - opinion.Opinion.NegativeBias) + "</td><td>Positive</td><td>" + opinion.Opinion.PositiveBias + "</td><td>Negative</td><td>" + opinion.Opinion.NegativeBias + "</td></tr>";
+    }
 }
 
 function newRequest() {

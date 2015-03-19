@@ -3,20 +3,20 @@ body {
 	margin:                                0px;
 	background:                            #009EC3;
 	font-family:                           Arial, sans-serif;
-	font-size:                             20px;
+	font-size:                             1em;
 	color:                                 #FFF;
 	text-shadow:                           0px 1px 0px #007C9E;
 	overflow:                              hidden;
 }
 
 ol, ul, li {
-	margin:                                0px;
-	padding:                               0px;
+	margin:                                0;
+	padding:                               0;
 	list-style:                            none;
 }
 
 h1, h2 {
-	margin:                                0px;
+	margin:                                0;
 }
 
 a {
@@ -25,13 +25,19 @@ a {
 	color:                                 #FFF;
 }
 
+#readerContainer{
+    width:                                 100%;
+    margin-left:                           auto;
+    margin-right:                          auto;
+}
+
 #process {
 	display:                               none;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-	width:			               6px;
+	width:			                       6px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -58,16 +64,17 @@ a {
 
 #hashtagSelectionSidebar h1 {
 	margin:                                0px;
-	font-size:                             32px;
+	font-size:                             2em;
 	text-transform:                        uppercase;
 	text-shadow:                           2px 2px rgba(0,0,0,0.5);
 }
 
 #hashtagSelectionSidebar h2 {
 	margin:                                25px 0px 0px 0px;
-	font-size:                             inherit;
+	font-size:                             1.2em;
 	font-weight:                           normal;
 	line-height:                           28px;
+    text-shadow:                           0px 0px 7px rgba(0,0,0,0.75);
 }
 
 #hashtagSelectionSidebar #hashtags {
@@ -79,7 +86,7 @@ a {
 #hashtagSelectionSidebar #hashtags li {
 	margin:                                15px 0px 0px 0px;
 	padding:                               15px 0px 0px 0px;
-    font-size:                             14px;
+    font-size:                             0.88em;
 	border-top:                            1px dotted rgba(255, 255, 255, 0.3);
     text-shadow:                           0px 0px 7px rgba(0,0,0,0.75);
 	white-space:                           nowrap;
@@ -110,27 +117,24 @@ a {
 }
 
 #hashtagSelectionSidebar #modalLinks {
-	width:                                 300px;
-	font-size:                             16px;
+	width:                                 100%;
+	font-size:                             0.95em;
 	padding-bottom:                        0.63em;
 	padding-top:                           0.63em;
     text-shadow:                           0px 0px 7px rgba(0,0,0,0.75);
+    text-align:                            center;
 }
 
 #hashtagSelectionSidebar #modalLinks li {
 	display:                               inline;
 	cursor:                                pointer;
-
-}
-
-#hashtagSelectionSidebar #modalLinks li:last-child {
-	float:                                 right;
+    margin-right:                          0.63em;
 }
 
 #hashtagSelectionSidebar #closeHashtagSelectionSidebarButton {
 	position:                              absolute;
-	top:                                   45px;
-	right:                                 45px;
+	top:                                   3.437em;
+	right:                                 2.812em;
 	opacity:                               0.9;
 }
 
