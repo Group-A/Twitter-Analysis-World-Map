@@ -35,11 +35,20 @@ var keyboard = {
     control: 17
 }
 
+var mouse = {
+	buttons : [false, false, false],
+	x : -1,
+	y : -1,
+	LEFT : 0,
+	RIGHT : 2,
+	MIDDLE : 1
+}
+
 var worldPosition = {
     xAngle: 0,
     yAngle: 1,
     zoom: 1,
-    targetXAngle: 2,
+    targetXAngle: 0,//2,
     targetYAngle: 0,
     targetZoom: 1.75
 }
@@ -152,6 +161,29 @@ function arrayPush(dest, source) {
         dest.push(source[i]);
 }
 
+function buildQuad(width, height) {
+	var w = width/2,
+	    h = height/2;
+	vertices = [-w, -h,  0,
+				-w,  h,  0,
+				 w, -h,  0,
+				 w,  h,  0];
+				
+	normals = [0, 0, 1,
+			   0, 0, 1,
+			   0, 0, 1,
+			   0, 0, 1];
+			   
+	indices = [0, 1, 2, 1, 2, 3];
+	
+	textureCoords = [0, 1,
+					 0, 0,
+					 1, 1,
+					 1, 0];
+					 
+	return new Model(vertices, indices, textureCoords, normals);
+}
+
 function buildSphere() {
     vertices = [];
     normals = [];
@@ -259,6 +291,35 @@ function webGLStart() {
     window.addEventListener("keyup", function (e) {
         keyboard.keys[e.keyCode] = false;
     });
+	
+	glCanvas.oncontextmenu = function(e) {
+		return false;
+	};
+	
+	glCanvas.addEventListener("mousedown", function(e) {
+		mouse.buttons[e.button] = true;
+	});
+	
+	glCanvas.addEventListener("mouseup", function(e) {
+		mouse.buttons[e.button] = false;
+	});
+	
+	glCanvas.addEventListener("mousemove", function(e) {
+		if(mouse.x != -1)
+		{
+			if(mouse.buttons[mouse.RIGHT])
+			{
+				worldPosition.targetZoom -= (e.clientY - mouse.y) / 200 * worldPosition.zoom;
+			}
+			if(mouse.buttons[mouse.LEFT])
+			{
+				worldPosition.targetXAngle += (e.clientX - mouse.x) / 50 / worldPosition.zoom;
+				worldPosition.targetYAngle += (e.clientY - mouse.y) / 50 / worldPosition.zoom;
+			}
+		}
+		mouse.x = e.clientX;
+		mouse.y = e.clientY;
+	});
 
     gl = getGLContext(glCanvas);
 
@@ -276,7 +337,7 @@ function webGLStart() {
 function buildPlanet() {
     mapTexture = gl.createTexture();
     textureFromImage(mapCanvas, mapTexture);
-    sphere = buildSphere();
+    sphere = buildSphere()//buildQuad(2, 1);
     planetReady = true;
 }
 
@@ -312,6 +373,8 @@ function drawLoop() {
         else
             worldPosition.targetYAngle += delta * rotateSpeed / worldPosition.zoom;
     }
+	
+	worldPosition.targetZoom = clamp(worldPosition.targetZoom, 1, 100);
 
     worldPosition.zoom += (worldPosition.targetZoom - worldPosition.zoom) * delta * 4;
     worldPosition.xAngle += (worldPosition.targetXAngle - worldPosition.xAngle) * delta * 4;
