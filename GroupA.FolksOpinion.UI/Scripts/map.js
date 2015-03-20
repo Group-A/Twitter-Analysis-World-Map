@@ -54,11 +54,10 @@ function parseJSONData(string) {
     var data = JSON.parse(string);
     if (data.CountryOpinions == "")
     {
-        alert("Not enough data was gathered "+decodeURI(data.Subject));
+        alert("Not enough data was gathered "+decodeURIComponent(data.Subject));
     }
     else
     {
-        createScreenReader(data);
         for (var i in data.CountryOpinions) {
             var opinion = data.CountryOpinions[i];
 
@@ -66,6 +65,7 @@ function parseJSONData(string) {
                 opinion.Opinion.PositiveBias
               - opinion.Opinion.NegativeBias;
         }
+        createScreenReader(data);
     }
     
 }
@@ -93,6 +93,7 @@ function requestTopic(topic) {
 
     request.onload = function (e) {
         searchField.style.backgroundImage = "~/Content/Images/customSearchTermFieldBackground.png";
+        clearScreenReader();
         parseJSONData(request.response);
         renderMap();
     }.bind(this);
@@ -103,11 +104,19 @@ function requestTopic(topic) {
 function createScreenReader(data)
 {
     var table = document.getElementById("reader");
+    table.innerHTML += "<tr><td>Subject</td><td>Country</td><td>Attitude</td><td>Positive</td><td>Negative</td>";
     for(var i in data.CountryOpinions)
     {
         var opinion = data.CountryOpinions[i];
-        table.innerHTML += "<tr><td>Country</td><td>" + opinion.Country + "</td><td>Attitude</td><td>" + (opinion.Opinion.PositiveBias - opinion.Opinion.NegativeBias) + "</td><td>Positive</td><td>" + opinion.Opinion.PositiveBias + "</td><td>Negative</td><td>" + opinion.Opinion.NegativeBias + "</td></tr>";
+        table.innerHTML += "<td>"+decodeURIComponent(data.Subject)+"</td><td>" + opinion.Country + "</td><td>" + Math.floor((opinion.Opinion.PositiveBias - opinion.Opinion.NegativeBias)*100)/100 + "</td><td>" + opinion.Opinion.PositiveBias + "</td><td>" + opinion.Opinion.NegativeBias + "</td>";
     }
+    table.innerHTML += "</tr>";
+}
+
+function clearScreenReader()
+{
+    var table = document.getElementById("reader");
+    table.innerHTML = "";
 }
 
 function newRequest() {

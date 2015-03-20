@@ -26,9 +26,12 @@ a {
 }
 
 #readerContainer{
-    width:                                 100%;
-    margin-left:                           auto;
-    margin-right:                          auto;
+    position:                              absolute;
+    left:                                  -10000px;
+    top:                                   auto;
+    width:                                 1px;
+    height:                                1px;
+    overflow:                              hidden;
 }
 
 #process {
