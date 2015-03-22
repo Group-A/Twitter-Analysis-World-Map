@@ -55,6 +55,7 @@ function parseJSONData(string) {
     if (data.CountryOpinions == "")
     {
         alert("Not enough data was gathered "+decodeURIComponent(data.Subject));
+        createScreenReader(data);
     }
     else
     {
@@ -104,13 +105,19 @@ function requestTopic(topic) {
 function createScreenReader(data)
 {
     var table = document.getElementById("reader");
-    table.innerHTML += "<tr><td>Subject</td><td>Country</td><td>Attitude</td><td>Positive</td><td>Negative</td>";
-    for(var i in data.CountryOpinions)
+    if (data.CountryOpinions == "")
     {
-        var opinion = data.CountryOpinions[i];
-        table.innerHTML += "<td>"+decodeURIComponent(data.Subject)+"</td><td>" + opinion.Country + "</td><td>" + Math.floor((opinion.Opinion.PositiveBias - opinion.Opinion.NegativeBias)*100)/100 + "</td><td>" + opinion.Opinion.PositiveBias + "</td><td>" + opinion.Opinion.NegativeBias + "</td>";
+        table.innerHTML = "<tr><td>Not enough data gathered for "+decodeURIComponent(data.Subject)+", please select another subject</td></tr>";
     }
-    table.innerHTML += "</tr>";
+    else {
+        table.innerHTML += "<tr><td>Subject</td><td>Country</td><td>Attitude</td><td>Positive</td><td>Negative</td>";
+        for (var i in data.CountryOpinions) {
+            var opinion = data.CountryOpinions[i];
+            table.innerHTML += "<td>" + decodeURIComponent(data.Subject) + "</td><td>" + opinion.Country + "</td><td>" + Math.floor((opinion.Opinion.PositiveBias - opinion.Opinion.NegativeBias) * 100) / 100 + "</td><td>" + opinion.Opinion.PositiveBias + "</td><td>" + opinion.Opinion.NegativeBias + "</td>";
+        }
+        table.innerHTML += "</tr>";
+    }
+    
 }
 
 function clearScreenReader()
