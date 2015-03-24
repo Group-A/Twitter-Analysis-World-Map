@@ -8,5 +8,7 @@ namespace GroupA.FolksOpinion.UI.Models
 {
     interface ICaching
     {
+        private void PullFromCache();
+        private void PushToCache();
     }
 }
