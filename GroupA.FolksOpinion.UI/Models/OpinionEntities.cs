@@ -38,6 +38,7 @@ namespace GroupA.FolksOpinion.UI.Models
 
     public class SubjectTweets
     {
-        
+        public string Subject { get; set; }
+        public IEnumerable<Tweet> Tweets { get; set; }
     }
 }
