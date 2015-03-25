@@ -1,4 +1,4 @@
-﻿/* File:        MySQLInterface.cs
+﻿/* File:        MySqlInterface.cs
  * Purpose:     Generic interface to connect to a MySQL backend.
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
@@ -18,7 +18,7 @@ using MySql.Data.MySqlClient;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public class MySQLInterface
+    public class MySqlInterface
     {
         /* Enum for representing the current state of the SQL connection */
         private enum State
@@ -38,7 +38,7 @@ namespace GroupA.FolksOpinion.UI.Models
         private MySqlConnection connection;
         private State state;
 
-        public MySQLInterface(string host, string database, string user, string password)
+        public MySqlInterface(string host, string database, string user, string password)
         {
             state = State.Disconnected;
 

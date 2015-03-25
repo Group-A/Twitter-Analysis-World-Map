@@ -28,7 +28,7 @@ namespace GroupA.FolksOpinion.UI.Models
 {
     public class MySqlStorage : TwitterCacheEngine
     {
-        MySQLInterface sql;
+        MySqlInterface sql;
 
         public MySqlStorage()
         {
@@ -39,7 +39,7 @@ namespace GroupA.FolksOpinion.UI.Models
             String password = ConfigurationManager.AppSettings["MySQL_CachePassword"];
 
             /* Initialise SQL interface */
-            sql = new MySQLInterface(host, database, user, password);
+            sql = new MySqlInterface(host, database, user, password);
         }
 
         public override void CacheTweets(IEnumerable<TweetOpinion> tweets)
