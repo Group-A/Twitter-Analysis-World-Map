@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    interface IFolksOpinionStorage
+    public interface IFolksOpinionStorage
     {
         void AddTweetOpinion(TweetOpinion tweetOpinion);
         TweetOpinion GetTweetOpinion(string tweetId);
