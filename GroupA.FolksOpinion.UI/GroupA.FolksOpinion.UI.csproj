@@ -125,6 +125,7 @@
     <Compile Include="Models\Opinionator.cs" />
     <Compile Include="Models\TrendingTopics.cs" />
     <Compile Include="Models\TweetAnalyser.cs" />
+    <Compile Include="Models\TweetManager.cs" />
     <Compile Include="Models\TwitterCacheEngine.cs" />
     <Compile Include="Models\FolksOpinionTwitterApi.cs" />
     <Compile Include="Models\TwitterEntities.cs" />
