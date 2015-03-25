@@ -25,25 +25,14 @@ $(function () {
 	openHashtagSelectionSidebarButton.click(toggleHashtagSelectionSidebarVisibility);
 	closeHashtagSelectionSidebarButton.click(toggleHashtagSelectionSidebarVisibility);
 
-	/*$('#hashtagSelectionSidebar #hashtags li').click(function () {
-		alert('Hashtag \"' + $(this).text() + '\" was selected.');
-	});*/
-
 	$('#hashtagSelectionSidebar #modalLinks li').click(function () {
 		var modalElement = $('#' + $(this).text() + 'ModalBox');
 
 		displayElementModally(modalElement);
 	});
-
-	$('#optionsButton').click(function () {
-		var modalElement = $('#optionsModalBox');
-
-		displayElementModally(modalElement);
-	});
-
-	$('#optionsModalBox .colourScheme').click(function () {
-		changeColourScheme(this);
-	});
+	
+	// Make hashtag selection sidebar scrollable.
+	hashtagSelectionSidebar.makeScrollable();
 });
 
 // Resize the hashtag selection sidebar.
@@ -93,7 +82,6 @@ function displayElementModally(element) {
 	if(!modalElementPresent) {
 		modalFreezeFrame.fadeIn(function () {
 			centreElement(element);
-			body.css('overflow', 'hidden'); // Lock body, disallow scrolling.
 			element.css({'z-index': 1, 'box-shadow': '0px 0px 5px #007C9E'}).fadeIn(function () {
 				modalElementPresent = true;
 				modalElement = element;
@@ -119,8 +107,6 @@ function removeModalElement() {
 			modalFreezeFrame.fadeOut(function () {
 				modalElementPresent = false;
 				modalElement = null;
-
-				body.removeAttr('style');
 			});
 		});
 	}
@@ -134,47 +120,36 @@ function centreElement(element) {
 	element.css({'position': 'absolute', 'top': newTopPosition, 'left': newLeftPosition});
 }
 
-// Handle colour scheme selection.
-var colourSchemes = [
-	['009EC3', '18DB8D', 'E32967'],
-	['555', 'E872C5', 'F2E65C']
-];
-
-function populateOptionsModalBox() {
-	for(colourSchemeIndex = 0; colourSchemeIndex < colourSchemes.length; colourSchemeIndex++) {
-		var colourScheme = $('<div />', {
-			'class': 'colourScheme',
-			'id': 'colourScheme' + colourSchemeIndex
-		});
-
-		$('#optionsModalBox').append(colourScheme);
-
-		for(colourIndex = 0; colourIndex < 3; colourIndex++) {
-			var colourBlock = $('<div />', {'class': 'colourBlock'});
-
-			switch(colourIndex) {
-				case 0:
-					colourBlock.html('map<br />background');
-
-					break;
-
-				case 1:
-					colourBlock.html('postive<br />countries');
-
-					break;
-
-				case 2:
-					colourBlock.html('negative<br />countries');
-
-					break;
-			}
-
-			colourBlock.css('background', '#' + colourSchemes[colourSchemeIndex][colourIndex]);
-			colourScheme.append(colourBlock);
-		}
-	}
-}
-
-function changeColourScheme(colourScheme) {
-	alert('Colour scheme #' + $(colourScheme).attr('id') + ' selected.');
-}
+// Multi-browser support for custom scroll bar.
+(function ($) {
+	$.fn.makeScrollable = function () {
+		var scrollableElement = this;
+		
+		// Add scroll bar elements.
+		scrollableElement.prepend('<div class="scrollBarTrack"><div class="scrollBar"></div></div>');
+		
+		// Retrieve newly added scroll bar elements.
+		var scrollBarTrack = scrollableElement.find('.scrollBarTrack');
+		var scrollBar = scrollBarTrack.find('.scrollBar');
+		
+		// Configure scroll elements' CSS.
+		var viewportHeight = this.outerHeight();
+		var documentHeight = this[0].scrollHeight;
+		var scrollBarTrackHeight = (viewportHeight - 10);
+		var scrollBarHeight = ((viewportHeight / documentHeight) * viewportHeight);
+		
+		scrollBarTrack.height(scrollBarTrackHeight + 'px');
+		scrollBar.height(scrollBarHeight + 'px').draggable({
+				 	axis: 'y',
+				 	containment: 'parent',
+				 	drag: function () {
+				 		var scrollBarTop = parseInt($(this).css('top'));
+				 		var newScrollBarTop = ((scrollBarTop / scrollBarTrackHeight) * documentHeight);
+				 		
+				 		scrollableElement.scrollTop(newScrollBarTop);
+				 	}
+		})
+		
+		return this;
+	};
+}(jQuery));

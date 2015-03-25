@@ -1,4 +1,4 @@
-﻿@model GroupA.FolksOpinion.UI.Models.TrendingTopics
+@model GroupA.FolksOpinion.UI.Models.TrendingTopics
 
 @{
     ViewBag.Title = "Home Page";
@@ -62,6 +62,7 @@
 </script>
 
 @Scripts.Render("~/Scripts/main.js")
+@Scripts.Render("~/Scripts/jquery-ui-draggable.js")
 @Scripts.Render("~/Scripts/gl-matrix-min.js")
 @Scripts.Render("~/Scripts/map.js")
 @Scripts.Render("~/Scripts/webgl.js")
@@ -86,7 +87,7 @@
             <li><a href="#" class="hashtags" onclick="requestTopic('@trend.query')">@trend.name</a></li>
         }
     </ol>
-    <input type="text" id="customSearchTermField" onkeypress="searchCustomTerm(event)" placeholder="Search Twitter"/> <img src="~/Content/Images/process.gif" id="process"/>
+    <input type="text" id="customSearchTermField" onkeypress="searchCustomTerm(event)" />
     <img src="~/Content/Images/closeHashtagSelectionSidebarButton.png" alt="Close Sidebar" id="closeHashtagSelectionSidebarButton" /> 
     <ul id="modalLinks">
         <li>About</li>
@@ -95,7 +96,6 @@
 </div>
 
 <img src="~/Content/Images/openHashtagSelectionSidebarButton.png" alt="Open Sidebar" id="openHashtagSelectionSidebarButton" />
-<img src="~/Content/Images/optionsButton.png" alt="Options" id="optionsButton" />
 
 <div id="AboutModalBox" class="modalBox">
     <h1>About</h1>
@@ -112,8 +112,4 @@
 			Alternatively you can use the mouse by left clicking and dragging to rotate and right clicking and
 			dragging to zoom.</li>
     </ul>
-</div>
-<div id="optionsModalBox" class="modalBox">
-    <h1>Colour Scheme</h1>
-    <div class="separator"></div>
 </div>
