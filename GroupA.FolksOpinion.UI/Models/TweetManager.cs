@@ -5,7 +5,7 @@ using System.Web;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public partial class TweetManager
+    public class TweetManager
     {
         public SubjectTweets SubjectTweets { get; protected set; }
 
@@ -16,19 +16,24 @@ namespace GroupA.FolksOpinion.UI.Models
 
         protected TweetManager() { }
 
-        protected SubjectTweets GetTweets(string subject)
+        public IEnumerable<Tweet> GetTweets(string subject)
         {
             throw new NotImplementedException();
         }
 
-        private void RetrieveFromApi()
+        public IEnumerable<Tweet> GetFromApi(string subject)
         {
             throw new NotImplementedException();
         }
-    }
 
-    public partial class TweetManager
-    {
+        public IEnumerable<Tweet> GetFromStorage(string subject)
+        {
+            throw new NotImplementedException();
+        }
 
+        private void SaveToStorage(SubjectTweets subjectTweets)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
