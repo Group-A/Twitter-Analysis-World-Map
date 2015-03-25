@@ -40,8 +40,8 @@ namespace GroupA.FolksOpinion.UI.Models
 
         private IEnumerable<Tweet> GetTweets (string subject)
         {
-            var source = FolksOpinionTwitterApi.Instance;
-            return source.GetTweets(subject);
+            var source = new TweetManager(subject);
+            return source.SubjectTweets.Tweets;
         }
 
         private IEnumerable<TweetOpinion> OpinionateTweets (IEnumerable<Tweet> tweets)

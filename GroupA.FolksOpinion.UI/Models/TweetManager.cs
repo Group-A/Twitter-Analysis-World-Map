@@ -11,19 +11,27 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public TweetManager(string subject)
         {
-            throw new NotImplementedException();
+            SubjectTweets = new SubjectTweets
+            {
+                Subject = subject,
+                Tweets = GetTweets(subject)
+            };
         }
 
         protected TweetManager() { }
 
         public IEnumerable<Tweet> GetTweets(string subject)
         {
-            throw new NotImplementedException();
+            // TODO: use storage to decide if we should go to api
+            var tweets = new List<Tweet>();
+            tweets.AddRange(GetFromApi(subject));
+            return tweets;
         }
 
         public IEnumerable<Tweet> GetFromApi(string subject)
         {
-            throw new NotImplementedException();
+            var source = FolksOpinionTwitterApi.Instance;
+            return source.GetTweets(subject);
         }
 
         public IEnumerable<Tweet> GetFromStorage(string subject)
