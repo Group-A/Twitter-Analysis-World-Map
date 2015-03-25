@@ -20,19 +20,26 @@ var gl, glCanvas,
 	pMatrix = mat4.create(),
 
 	sphere = null,
+	plane = null,
 	lastTime = Date.now(),
 
 	mapTexture = null,
 	planetReady = false,
-    cameraZ = -128;
+    cameraZ = -128,
+	
+	RENDER_2D = 0,
+	RENDER_3D = 1,
+	renderType = RENDER_3D;
 
 var keyboard = {
-    keys: [],
-    up: 38,
-    down: 40,
-    left: 37,
-    right: 39,
-    control: 17
+    keys : [],
+	keysLast : [],
+    up  : 38,
+    down : 40,
+    left : 37,
+    right : 39,
+    control : 17,
+	space : 32
 }
 
 var mouse = {
@@ -47,9 +54,13 @@ var mouse = {
 var worldPosition = {
     xAngle: 0,
     yAngle: 1,
+	x: 0,
+	y: 0,
     zoom: 1,
-    targetXAngle: 0,//2,
+    targetXAngle: 2,
     targetYAngle: 0,
+	targetX: 0,
+	targetY: 0,
     targetZoom: 1.75
 }
 
@@ -255,25 +266,30 @@ function drawWorld(delta) {
         mat3.normalFromMat4(nMatrix, mvMatrix);
         gl.uniformMatrix3fv(mapShader.nMatrixUniform, false, nMatrix);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, sphere.positionBuffer);
+		
+		var model = sphere;
+		if(renderType == RENDER_2D)	
+			model = plane;
+			
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.positionBuffer);
         gl.vertexAttribPointer(mapShader.vertexPositionAttribute,
-							   sphere.positionBuffer.itemSize,
+							   model.positionBuffer.itemSize,
 							   gl.FLOAT, false, 0, 0);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, sphere.texturePosBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.texturePosBuffer);
         gl.vertexAttribPointer(mapShader.texturePositionAttribute,
-							   sphere.texturePosBuffer.itemSize,
+							   model.texturePosBuffer.itemSize,
 							   gl.FLOAT, false, 0, 0);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, sphere.normalBuffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.normalBuffer);
         gl.vertexAttribPointer(mapShader.normalPositionAttribute,
-							   sphere.normalBuffer.itemSize,
+							   model.normalBuffer.itemSize,
 							   gl.FLOAT, false, 0, 0);
 
         bindTexture(mapTexture);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphere.indexBuffer);
-        gl.drawElements(gl.TRIANGLES, sphere.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+			
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.indexBuffer);
+        gl.drawElements(gl.TRIANGLES, model.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
     }
 }
 
@@ -334,10 +350,16 @@ function webGLStart() {
     drawLoop();
 }
 
-function buildPlanet() {
+function buildPlanet(rebuildVbo) {
+	rebuildVbo = rebuildVbo == undefined ? true : rebuildVbo;
+	
     mapTexture = gl.createTexture();
     textureFromImage(mapCanvas, mapTexture);
-    sphere = buildSphere()//buildQuad(2, 1);
+	if(rebuildVbo)
+	{
+		sphere = buildSphere()//buildQuad(2, 1);
+		plane = buildQuad(4, 2);
+	}
     planetReady = true;
 }
 
@@ -366,6 +388,9 @@ function drawLoop() {
         else
             worldPosition.targetYAngle -= delta * rotateSpeed / worldPosition.zoom;
     }
+	
+	if(keyboard.keys[keyboard.space] && !keyboard.keysLast[keyboard.space])
+		renderType = renderType == RENDER_2D ? RENDER_3D : RENDER_2D;
 
     if (keyboard.keys[keyboard.down]) {
         if (keyboard.keys[keyboard.control])
@@ -385,12 +410,21 @@ function drawLoop() {
                [worldPosition.zoom,
                 worldPosition.zoom,
                 worldPosition.zoom]);
-
-    mat4.rotate(worldTransform, worldTransform, worldPosition.xAngle, [0, 1, 0]);
-    mat4.rotate(worldTransform, worldTransform, worldPosition.yAngle,
-                [Math.cos(worldPosition.xAngle), 0, Math.sin(worldPosition.xAngle)]);
+	
+	if(renderType == RENDER_3D)
+	{
+		mat4.rotate(worldTransform, worldTransform, worldPosition.xAngle, [0, 1, 0]);
+		mat4.rotate(worldTransform, worldTransform, worldPosition.yAngle,
+					[Math.cos(worldPosition.xAngle), 0, Math.sin(worldPosition.xAngle)]);
+	}
+	else if(renderType == RENDER_2D)
+	{
+		mat4.translate(worldTransform, worldTransform, [worldPosition.x, -worldPosition.y, 0]);
+	}
 
     drawWorld(delta);
+	
+	keyboard.keysLast = keyboard.keys.slice(0);
 }
 
 

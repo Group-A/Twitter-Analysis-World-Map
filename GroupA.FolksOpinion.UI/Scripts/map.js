@@ -42,9 +42,10 @@ window.onload = function () {
     webGLStart()
 }
 
-function renderMap() {
+function renderMap(rebuildVbo) {
+	rebuildVbo = rebuildVbo == undefined ? true : rebuildVbo;
     drawRawMap(mapCanvas, mapCtx);
-    buildPlanet(); //TODO: why is this here?
+    buildPlanet(rebuildVbo);
 }
 
 function parseJSONData(string) {
@@ -96,7 +97,7 @@ function requestTopic(topic) {
         searchField.style.backgroundImage = "~/Content/Images/customSearchTermFieldBackground.png";
         clearScreenReader();
         parseJSONData(request.response);
-        renderMap();
+        renderMap(false);
     }.bind(this);
 
     request.send();
