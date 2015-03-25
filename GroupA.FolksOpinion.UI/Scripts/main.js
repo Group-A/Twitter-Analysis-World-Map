@@ -16,9 +16,6 @@ $(function () {
 	// Resize the hashtag selection sidebar.
 	resizeHashtagSelectionSidebar();
 
-	// Handle colour scheme selections.
-	populateOptionsModalBox();
-
 	// Initialise event listeners.
 	$(window).resize(resizeHashtagSelectionSidebar);
 
