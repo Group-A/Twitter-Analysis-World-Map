@@ -26,7 +26,7 @@ using System.Web;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public class MySqlStorage : TwitterCacheEngine
+    public partial class MySqlStorage : TwitterCacheEngine
     {
         MySqlInterface sql;
 
@@ -175,6 +175,29 @@ namespace GroupA.FolksOpinion.UI.Models
             }
 
             return types;
+        }
+    }
+
+    public partial class MySqlStorage : IFolksOpinionStorage
+    {
+        public void AddTweetOpinion(TweetOpinion tweetOpinion)
+        {
+            throw new NotImplementedException();
+        }
+
+        public TweetOpinion GetTweetOpinion(string tweetId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddSubjectTweets(SubjectTweets subjectTweets)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SubjectTweets GetSubjectTweets(string subject)
+        {
+            throw new NotImplementedException();
         }
     }
 }
