@@ -30,7 +30,7 @@ $(function () {
 
 		displayElementModally(modalElement);
 	});
-	
+
 	// Make hashtag selection sidebar scrollable.
 	hashtagSelectionSidebar.makeScrollable();
 });
@@ -124,20 +124,20 @@ function centreElement(element) {
 (function ($) {
 	$.fn.makeScrollable = function () {
 		var scrollableElement = this;
-		
+
 		// Add scroll bar elements.
 		scrollableElement.prepend('<div class="scrollBarTrack"><div class="scrollBar"></div></div>');
-		
+
 		// Retrieve newly added scroll bar elements.
 		var scrollBarTrack = scrollableElement.find('.scrollBarTrack');
 		var scrollBar = scrollBarTrack.find('.scrollBar');
-		
+
 		// Configure scroll elements' CSS.
 		var viewportHeight = this.outerHeight();
 		var documentHeight = this[0].scrollHeight;
 		var scrollBarTrackHeight = (viewportHeight - 10);
 		var scrollBarHeight = ((viewportHeight / documentHeight) * viewportHeight);
-		
+
 		scrollBarTrack.height(scrollBarTrackHeight + 'px');
 		scrollBar.height(scrollBarHeight + 'px').draggable({
 				 	axis: 'y',
@@ -145,11 +145,12 @@ function centreElement(element) {
 				 	drag: function () {
 				 		var scrollBarTop = parseInt($(this).css('top'));
 				 		var newScrollBarTop = ((scrollBarTop / scrollBarTrackHeight) * documentHeight);
-				 		
+
+				 		scrollBarTrack.css('top', (newScrollBarTop + 5) + 'px');
 				 		scrollableElement.scrollTop(newScrollBarTop);
 				 	}
 		})
-		
+
 		return this;
 	};
 }(jQuery));
