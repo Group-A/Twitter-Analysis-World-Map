@@ -144,6 +144,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\gl-matrix-min.js" />
+    <Content Include="Scripts\jquery-ui-draggable.js" />
     <Content Include="Scripts\jQuery.js" />
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\map.js" />
