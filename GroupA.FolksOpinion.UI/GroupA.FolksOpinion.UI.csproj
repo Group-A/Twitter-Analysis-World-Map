@@ -122,7 +122,7 @@
     <Compile Include="Models\IFolksOpinionStorage.cs" />
     <Compile Include="Models\ILexicalBiasAnalyser.cs" />
     <Compile Include="Models\MySQLInterface.cs" />
-    <Compile Include="Models\MySQLTwitterCacheEngine.cs" />
+    <Compile Include="Models\MySqlStorage.cs" />
     <Compile Include="Models\Opinionator.cs" />
     <Compile Include="Models\StorageManager.cs" />
     <Compile Include="Models\TrendingTopics.cs" />

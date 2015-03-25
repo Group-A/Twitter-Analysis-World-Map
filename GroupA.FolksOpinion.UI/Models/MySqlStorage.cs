@@ -1,8 +1,8 @@
-﻿/* File:        MySQLTwitterCacheEngine.cs
+﻿/* File:        MySqlStorage.cs
  * Purpose:     
  * Created:     12th February 2015
  * Author:      Michael Rodenhurst
- * Exposes:     MySQLTwitterCacheEngine
+ * Exposes:     MySqlStorage
  *
  * Description: 
  * 
@@ -26,11 +26,11 @@ using System.Web;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public class MySQLTwitterCacheEngine : TwitterCacheEngine
+    public class MySqlStorage : TwitterCacheEngine
     {
         MySQLInterface sql;
 
-        public MySQLTwitterCacheEngine()
+        public MySqlStorage()
         {
             /* Get SQL config variables */
             String host = ConfigurationManager.AppSettings["MySQL_CacheHost"];
