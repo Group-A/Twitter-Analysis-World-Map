@@ -13,6 +13,8 @@
  *              - Fleshed out stubs
  *              5th March 2015, Michael Rodenhurst
  *              - Changed everything
+ *              27th March 2015, Michael Rodenhurst
+ *              - Changed everything. Aren't these comments helpful?
  *              
  * Issues:      - 
  */
@@ -26,7 +28,7 @@ using System.Web;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
-    public partial class MySqlStorage : TwitterCacheEngine
+    public partial class MySqlStorage : IFolksOpinionStorage
     {
         MySqlInterface sql;
 
@@ -42,162 +44,124 @@ namespace GroupA.FolksOpinion.UI.Models
             sql = new MySqlInterface(host, database, user, password);
         }
 
-        public override void CacheTweets(IEnumerable<TweetOpinion> tweets)
-        {
-            if (tweets == null) // Don't handle invalid dataset.
-                return;
-
-            foreach (TweetOpinion tweet_opinion in tweets)
-                InsertObject(tweet_opinion);
-        }
-
-        public override IEnumerable<TweetOpinion> GetTweets(string subject)
-        {
-            if (string.IsNullOrEmpty(subject)) // Ignore invalid subject
-                return null;
-
-            /* FIXME: This is a manual select query - not dynamic. Must find a way to
-             * dynamically specify the target field (TweetOpinion.Tweet.Text atm) */
-            MySqlDataReader reader = sql.Select(typeof(Tweet).Name, "text LIKE " + subject, null);
-
-            // For each record in reader result
-            //   Build Tweet object from Tweet table record
-            //   Iterate over TweetOpinion structure
-            //      For each (sub)property, select table from database WHERE __id == tweet record id
-            //   Append assembled TweetOpinion to TweetOpinion list
-            // Return list
-
-            /* Iterate over all fields of TweetOpinion */
-
-            throw new NotImplementedException();
-
-            return null;
-        }
-
-        public override bool ValidateCache(Type type)
-        {
-            throw new NotImplementedException();
-        }
-
-        /* Private functions used internally */
-
-        /* Creates the required table structure by converting the passed Type to sql tables.
-         * Object references become foreign keys */
-        private void CreateTableStructure(Type type)
-        {
-            CreateTable(type);
-        }
-
-        /* Helper functions */
-
-        /* Inserts the provided object into SQL table. Also inserts any sub-objects
-         * required during iteration */
-        /* Returns the unique ID of the created SQL record for FK association*/
-        private int InsertObject(Object item)
-        {
-            List<Tuple<string, string>> columns = new List<Tuple<string, string>>();
-
-            /* Iterate over all fields of the provided item */
-            foreach (PropertyInfo prop in item.GetType().GetProperties())
-            {
-                string field_name = prop.Name;
-                Object field_value = prop.GetValue(item);
-
-                if (UserDefinedStruct(field_value.GetType()))
-                    field_value = InsertObject(field_value);
-
-                columns.Add(new Tuple<string, string>(field_name, "" + field_value));
-            }
-
-            sql.InsertRow(item.GetType().Name, columns); // Insert row into table
-
-            /* Get ID of row we just inserted. Note: Probably not thread safe */
-            List<string> column = new List<string>();
-            column.Add("MAX(__UID)");
-            MySqlDataReader reader = sql.Select(item.GetType().Name, null, column);
-
-            return reader.GetInt32(0); // TODO: null handling
-        }
-        
-        /* Creates the specified table, also creates any necessary sub-tables */
-        private void CreateTable(Type type)
-        {
-            List<Tuple<string, string, string>> rows = new List<Tuple<string, string, string>>();
-            rows.Add(new Tuple<string, string, string>("__UID", "int", "AUTO_INCREMENT")); // DB UID - Not to be confused with data structure ids
-
-
-            foreach (PropertyInfo prop in type.GetProperties())
-            {
-                if (UserDefinedStruct(prop.PropertyType))
-                    CreateTable(prop.PropertyType);
-
-                rows.Add(new Tuple<string, string, string>(prop.Name, GetSQLDataType(prop.PropertyType), null));
-            }
-
-            // Create table
-            sql.CreateTable(type.Name, rows);
-
-            /* Mark foreign keys */
-            foreach (PropertyInfo prop in type.GetProperties())
-                if (UserDefinedStruct(prop.PropertyType))
-                    sql.SetForeignKey(type.Name, prop.Name, prop.PropertyType.Name, "__UID");
-        }
-
-        /* Returns true if the passed type is a user-defined struct,
-         * rather than a "standard" built-in/library type. */
-        private bool UserDefinedStruct(Type type)
-        {
-           return type.IsValueType && !type.IsPrimitive;
-        }
-
-        /* Horrible function that converts a C# basic datatype (including box wrappers)
-         * to a MySQL string-type (ie. 'int') */
-        private string GetSQLDataType(Type type)
-        {
-            if(UserDefinedStruct(type))
-                return "int";   // Foreign keys are ints
-
-            return null;
-        }
-
-        /* Recursively iterates over all sub-types in the passed Type (if it's a structure) 
-         * and returns a list */
-        private List<Tuple<Type, string>> GetObjectTypes(Type type)
-        {
-            List<Tuple<Type, string>> types = new List<Tuple<Type, string>>();
-
-            foreach(PropertyInfo prop in type.GetProperties())
-            {
-                if (UserDefinedStruct(prop.PropertyType))
-                    types.AddRange(GetObjectTypes(type));
-                else
-                    types.Add(new Tuple<Type, string>(prop.PropertyType, prop.Name));
-            }
-
-            return types;
-        }
-    }
-
-    public partial class MySqlStorage : IFolksOpinionStorage
-    {
         public void AddTweetOpinion(TweetOpinion tweetOpinion)
         {
-            throw new NotImplementedException();
+            /* Insert Tweet and Opinion, returning their id's */
+            int tweet_id = InsertTweet(tweetOpinion.Tweet);
+            int opinion_id = InsertOpinion(tweetOpinion.Opinion);
+
+            /* Buid TweetOpinion table set, and insert object */
+            List<Tuple<string, string>> tweetopinion_columns = new List<Tuple<string, string>>();
+            tweetopinion_columns.Add(new Tuple<string, string>("tweet", "" + tweet_id));
+            tweetopinion_columns.Add(new Tuple<string, string>("opinion", "" + opinion_id));
+
+            sql.InsertRow("TweetOpinion", tweetopinion_columns);
         }
 
         public TweetOpinion GetTweetOpinion(string tweetId)
         {
+            TweetOpinion tweet_opinion = new TweetOpinion();
+
             throw new NotImplementedException();
         }
 
         public void AddSubjectTweets(SubjectTweets subjectTweets)
         {
-            throw new NotImplementedException();
+            foreach(Tweet tweet in subjectTweets.Tweets)
+            {
+                int tweet_id = GetTweetID(tweet);
+
+                /* Build table set and insert new row */
+                List<Tuple<string, string>> subjecttweet_columns = new List<Tuple<string, string>>();
+                subjecttweet_columns.Add(new Tuple<string, string>("subject", subjectTweets.Subject));
+                subjecttweet_columns.Add(new Tuple<string, string>("tweet", "" + tweet_id));
+
+                sql.InsertRow("SubjectTweet", subjecttweet_columns);
+            }
         }
 
         public SubjectTweets GetSubjectTweets(string subject)
         {
             throw new NotImplementedException();
+        }
+
+        /* Private helper functions */
+
+        /* Fetches the PK id of a Tweet from the DB.
+         * Inserts Tweet into DB if not already present */
+        private int GetTweetID(Tweet tweet)
+        {
+            /* Fetch tweet from DB where id_str matches */
+            List<string> column = new List<string>();
+            column.Add("id");
+            MySqlDataReader reader = sql.Select("Tweet", "id_str=" + tweet.id_str, column);
+
+            /* Return ID if the reader contains the query result */
+            if (reader.HasRows)
+                return reader.GetInt32(0);
+
+            /* If we get this far, InsertTweet and return result */
+            return InsertTweet(tweet);
+        }
+
+        /* Returns the ID of the inserted tweet */
+        private int InsertTweet(Tweet tweet)
+        {
+            string place = GetPlaceCountryCode(tweet.place); // Get countryCode for Place from DB
+
+            /* Build table set and insert new row */
+            List<Tuple<string, string>> tweet_columns = new List<Tuple<string, string>>();
+            tweet_columns.Add(new Tuple<string, string>("created_at", DateTime.Now.ToString()));
+            tweet_columns.Add(new Tuple<string, string>("id_str", tweet.id_str));
+            tweet_columns.Add(new Tuple<string, string>("place", place));
+            tweet_columns.Add(new Tuple<string, string>("text", tweet.text));
+
+            sql.InsertRow("Tweet", tweet_columns);
+
+            /* Get ID of row we just inserted. Note: Probably not thread safe */
+            List<string> column = new List<string>();
+            column.Add("MAX(id)");
+            MySqlDataReader reader = sql.Select("Tweet", null, column);
+
+            return reader.GetInt32(0); // TODO: null handling
+        }
+
+        /* Returns the ID of the inserted opinion */
+        private int InsertOpinion(Opinion opinion)
+        {
+            List<Tuple<string, string>> opinion_columns = new List<Tuple<string, string>>();
+            opinion_columns.Add(new Tuple<string, string>("posBias", "" + opinion.PositiveBias));
+            opinion_columns.Add(new Tuple<string, string>("negBias", "" + opinion.NegativeBias));
+
+            sql.InsertRow("Opinion", opinion_columns);
+
+            /* Get ID of row we just inserted. Note: Probably not thread safe */
+            List<string> column = new List<string>();
+            column.Add("MAX(id)");
+            MySqlDataReader reader = sql.Select("Opinion", null, column);
+
+            return reader.GetInt32(0);
+        }
+
+        /* Simply returns countrycode of place. Inserting place into DB if required */
+        private string GetPlaceCountryCode(Place place)
+        {
+            /* Check if place already exists in database */
+            List<string> column = new List<string>();
+            column.Add("countryCode");
+            MySqlDataReader reader = sql.Select("Place", "countryCode=" + place.country_code, column);
+
+            if (reader.HasRows)
+                return reader.GetString(0);
+
+            /* Entry not found. Create place entry in database */
+            List<Tuple<string, string>> place_columns = new List<Tuple<string, string>>();
+            place_columns.Add(new Tuple<string, string>("name", place.country));
+            place_columns.Add(new Tuple<string, string>("countryCode", place.country_code));
+
+            sql.InsertRow("Place", place_columns);
+
+            return place.country_code; // FIXME: lazy and bad for obvious reasons
         }
     }
 }
