@@ -60,9 +60,17 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public TweetOpinion GetTweetOpinion(string tweetId)
         {
-            TweetOpinion tweet_opinion = new TweetOpinion();
+             int tweet_uid = -1;
 
-            throw new NotImplementedException();
+            MySqlDataReader reader = sql.Select("tweet", "id_str = " + tweetId, null);
+            if (reader.HasRows)
+                tweet_uid = reader.GetInt32(0); // Fixme: lazy hack
+
+            TweetOpinion tweet_opinion = new TweetOpinion();
+            tweet_opinion.Tweet = GetTweet(reader);
+            tweet_opinion.Opinion = GetOpinion(tweet_uid);
+
+            return tweet_opinion;
         }
 
         public void AddSubjectTweets(SubjectTweets subjectTweets)
@@ -87,6 +95,99 @@ namespace GroupA.FolksOpinion.UI.Models
 
         /* Private helper functions */
 
+        private Tweet GetTweet(MySqlDataReader reader)
+        {
+            if (!reader.HasRows)
+                return null;
+
+            Tweet tweet = new Tweet();
+
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                String name = reader.GetName(i);
+                String val = reader.GetString(i);
+
+                switch (name)
+                {
+                    case "id_str": tweet.id_str = val; break;
+                    case "place": tweet.place = GetPlace(val); break;
+                    case "text": tweet.text = val; break;
+                }
+            }
+
+            return tweet;
+        }
+
+        private Place GetPlace(String country_code)
+        {
+            Place place = new Place();
+
+            MySqlDataReader reader = sql.Select("place", "countryCode = " + country_code, null);
+
+            if(reader.HasRows)
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    String name = reader.GetName(i);
+                    String val = reader.GetString(i);
+
+                    switch (name)
+                    {
+                        case "countryCode": place.country_code = val; break;
+                        case "name": place.country = val; break;
+                    }
+                }
+            }
+
+            return place;
+        }
+
+        private Opinion GetOpinion(int tweet_uid)
+        {
+            /* Fetch the TweetOpinion and retrieve the opinion database id first */
+            MySqlDataReader reader = sql.Select("TweetOpinion", "tweet = " + tweet_uid, null);
+            int opinion_uid = -1;
+
+            if(reader.HasRows)
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    String name = reader.GetName(i);
+                    String val = reader.GetString(i);
+
+                    switch (name)
+                    {
+                        case "opinion": opinion_uid = Convert.ToInt32(val); break;
+                    }
+                }
+            }
+
+            if (opinion_uid < 0)
+                return null;
+
+            /* Get the opinion */
+            Opinion opinion = new Opinion();
+
+            reader = sql.Select("Opinion", "id = " + opinion_uid, null);
+
+            if(reader.HasRows)
+            {
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    String name = reader.GetName(i);
+                    String val = reader.GetString(i);
+
+                    switch (name)
+                    {
+                        case "posBias": opinion.PositiveBias = Convert.ToDouble(val); break;
+                        case "negBias": opinion.NegativeBias = Convert.ToDouble(val); break;
+                    }
+                }
+            }
+
+            return opinion;
+        }
+
         /* Fetches the PK id of a Tweet from the DB.
          * Inserts Tweet into DB if not already present */
         private int GetTweetID(Tweet tweet)
@@ -94,7 +195,7 @@ namespace GroupA.FolksOpinion.UI.Models
             /* Fetch tweet from DB where id_str matches */
             List<string> column = new List<string>();
             column.Add("id");
-            MySqlDataReader reader = sql.Select("Tweet", "id_str=" + tweet.id_str, column);
+            MySqlDataReader reader = sql.Select("Tweet", "id_str = " + tweet.id_str, column);
 
             /* Return ID if the reader contains the query result */
             if (reader.HasRows)
