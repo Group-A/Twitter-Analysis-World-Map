@@ -23,6 +23,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Reflection;
 using System.Web;
 
@@ -90,7 +91,32 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public SubjectTweets GetSubjectTweets(string subject)
         {
-            throw new NotImplementedException();
+            MySqlDataReader reader = sql.Select("SubjectTweets", "subject = " + subject, null);
+            if (!reader.HasRows)
+                return null;
+
+            SubjectTweets subject_tweets = new SubjectTweets();
+            List<Tweet> tweets = new List<Tweet>();
+            subject_tweets.Subject = subject;
+            subject_tweets.Tweets = tweets;
+
+            DataTable dt = new DataTable();
+            dt.Load(reader);
+
+            foreach(DataRow row in dt.Rows)
+            {
+                foreach(DataColumn col in dt.Columns)
+                {
+                    if(col.ColumnName == "tweet")
+                    {
+                        int tweet_uid = (int)row[col];
+                        MySqlDataReader reader_tweet = sql.Select("Tweet", "id = " + tweet_uid, null);
+                        tweets.Add(GetTweet(reader_tweet));
+                    }
+                }
+            }
+
+            return subject_tweets;
         }
 
         /* Private helper functions */
