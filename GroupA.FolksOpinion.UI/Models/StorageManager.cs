@@ -7,7 +7,12 @@ namespace GroupA.FolksOpinion.UI.Models
 {
     public class StorageManager : IFolksOpinionStorage
     {
-        protected IFolksOpinionStorage Store { get; set; }
+        private IFolksOpinionStorage _Store = new MySqlStorage();
+        protected IFolksOpinionStorage Store 
+        {
+            get { return _Store; }
+            set { _Store = value; }
+        }
 
         public void AddTweetOpinion(TweetOpinion tweetOpinion)
         {
