@@ -16,22 +16,22 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public void AddTweetOpinion(TweetOpinion tweetOpinion)
         {
-            throw new NotImplementedException();
+            Store.AddTweetOpinion(tweetOpinion);
         }
 
         public TweetOpinion GetTweetOpinion(string tweetId)
         {
-            throw new NotImplementedException();
+            return Store.GetTweetOpinion(tweetId);
         }
 
         public void AddSubjectTweets(SubjectTweets subjectTweets)
         {
-            throw new NotImplementedException();
+            Store.AddSubjectTweets(subjectTweets);
         }
 
         public SubjectTweets GetSubjectTweets(string subject)
         {
-            throw new NotImplementedException();
+            return Store.GetSubjectTweets(subject);
         }
     }
 }
