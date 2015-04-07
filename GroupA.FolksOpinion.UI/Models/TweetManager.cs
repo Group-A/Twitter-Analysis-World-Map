@@ -36,12 +36,15 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public IEnumerable<Tweet> GetFromStorage(string subject)
         {
-            throw new NotImplementedException();
+            var storage = new StorageManager();
+            var subjectTweets = storage.GetSubjectTweets(subject);
+            return subjectTweets.Tweets;
         }
 
         private void SaveToStorage(SubjectTweets subjectTweets)
         {
-            throw new NotImplementedException();
+            var storage = new StorageManager();
+            storage.AddSubjectTweets(subjectTweets);
         }
     }
 }
