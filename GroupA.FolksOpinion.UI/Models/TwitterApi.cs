@@ -206,7 +206,7 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Gets Tweets matching a search term, using GetApiResource. */
-        public string GetTweetsJson(string searchTerm, string sinceId = "1")
+        public string GetTweetsJson(string searchTerm, string sinceId = "0")
         {
             return GetApiResource("/1.1/search/tweets.json?" +
                 "q=" + searchTerm +
