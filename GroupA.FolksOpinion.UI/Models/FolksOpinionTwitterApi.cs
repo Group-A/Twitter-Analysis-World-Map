@@ -80,8 +80,10 @@ namespace GroupA.FolksOpinion.UI.Models
             return tweets;
         }
 
-        /* Returns a collection of trending topics for a given place. */
-        public IEnumerable<Trend> GetTrends(int woeid)
+        /* Returns a collection of trending topics for a given place. 
+         * Default: worldwide (WOEID 1) 
+         */
+        public IEnumerable<Trend> GetTrends(int woeid = 1)
         {
             var trends = new List<Trend>();
             var trendsJson = GetTrendsJson(woeid);
@@ -96,14 +98,6 @@ namespace GroupA.FolksOpinion.UI.Models
             trends.AddRange(trendsPlaceResponse[0].trends);
 
             return trends;
-        }
-
-        /* Returns a collection of globally trending topics. 
-         * WOEID: 1 (worldwide)
-         */
-        public IEnumerable<Trend> GetTrends()
-        {
-            return GetTrends(1);
         }
 
         /* Loads keys from config file.
