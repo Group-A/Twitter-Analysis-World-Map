@@ -18,7 +18,9 @@
  *              - Added GetTrendsPlaceResponse.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace GroupA.FolksOpinion.UI.Models
 {
@@ -32,6 +34,17 @@ namespace GroupA.FolksOpinion.UI.Models
         public string lang { get; set; }
         public Place place { get; set; }
         public string text { get; set; }
+
+        public DateTimeOffset CreatedAt
+        {
+            get
+            {
+                return DateTimeOffset.ParseExact(
+                    created_at,
+                    "ddd MMM dd HH:mm:ss zzz yyyy",
+                    CultureInfo.InvariantCulture);
+            }
+        }
     }
 
     /* Twitter entity: Place
