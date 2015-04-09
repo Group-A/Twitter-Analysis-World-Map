@@ -23,9 +23,9 @@ namespace GroupA.FolksOpinion.UI.Models
         public IEnumerable<Tweet> GetTweets(string subject)
         {
             var tweets = new List<Tweet>();
-
-            // Tweet created_at age threshold (10 minutes)
-            var tweetAgeThreshold = new TimeSpan(0, 10, 0);
+            var apiCallCountLimit = 5;
+            var tweetAgeThreshold = new TimeSpan(0, 10, 0); //(10 minutes)
+            var latestTweetId = "0"; // default
 
             // Check storage
             var storageTweets = (List<Tweet>) GetFromStorage(subject);
@@ -35,17 +35,32 @@ namespace GroupA.FolksOpinion.UI.Models
             if (storageTweets.Count > 0)
             {
                 var now = DateTimeOffset.Now;
-                var latestTweetDate = tweets
+                var latestTweet = tweets
                     .Where(t => t.CreatedAt == tweets.Max(x => x.CreatedAt))
-                    .FirstOrDefault()
-                    .CreatedAt;
+                    .FirstOrDefault();
+                var latestTweetDate = latestTweet.CreatedAt;
                 bool tweetsAreUpToDate = (now - latestTweetDate) < tweetAgeThreshold;
                 if (tweetsAreUpToDate) return tweets;
+                latestTweetId = latestTweet.id_str;
             }
 
             // Get new Tweets from API
-            // TODO: get only new tweets
-            var apiTweets = (List<Tweet>) GetFromApi(subject);
+            var apiTweets = new List<Tweet>();
+            for (var i=0; i < apiCallCountLimit; i++)
+            {
+                var apiTweetsHaul = (List<Tweet>) GetFromApi(subject, latestTweetId);
+                apiTweets.AddRange(apiTweetsHaul);
+
+                // Stop if API is exhausted
+                if (apiTweetsHaul.Count < 100) continue;
+
+                // Find latest Tweet id, for next iteration, if required
+                if (i < apiCallCountLimit - 1) break;
+                    latestTweetId = apiTweetsHaul
+                        .Where(t => t.CreatedAt == apiTweetsHaul.Max(x => x.CreatedAt))
+                        .FirstOrDefault()
+                        .id_str;
+            }
             tweets.AddRange(apiTweets);
 
             // Save new Tweets
@@ -62,10 +77,10 @@ namespace GroupA.FolksOpinion.UI.Models
             return tweets;
         }
 
-        public IEnumerable<Tweet> GetFromApi(string subject)
+        public IEnumerable<Tweet> GetFromApi(string subject, string sinceId = "0")
         {
             var source = FolksOpinionTwitterApi.Instance;
-            return source.GetTweets(subject);
+            return source.GetTweets(subject, sinceId);
         }
 
         public IEnumerable<Tweet> GetFromStorage(string subject)
