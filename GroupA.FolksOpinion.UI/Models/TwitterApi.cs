@@ -210,7 +210,8 @@ namespace GroupA.FolksOpinion.UI.Models
         {
             return GetApiResource("/1.1/search/tweets.json?" +
                 "q=" + searchTerm +
-                "since_id=" + sinceId +
+                "&since_id=" + sinceId +
+                "&result_type=recent" +
                 "&count=100");
         }
 
