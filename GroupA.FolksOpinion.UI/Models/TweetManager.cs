@@ -22,9 +22,43 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public IEnumerable<Tweet> GetTweets(string subject)
         {
-            // TODO: use storage to decide if we should go to api
             var tweets = new List<Tweet>();
-            tweets.AddRange(GetFromApi(subject));
+
+            // Tweet created_at age threshold (10 minutes)
+            var tweetAgeThreshold = new TimeSpan(0, 10, 0);
+
+            // Check storage
+            var storageTweets = (List<Tweet>) GetFromStorage(subject);
+            tweets.AddRange(storageTweets);
+
+            // Check Tweets for age
+            if (storageTweets.Count > 0)
+            {
+                var now = DateTimeOffset.Now;
+                var latestTweetDate = tweets
+                    .Where(t => t.CreatedAt == tweets.Max(x => x.CreatedAt))
+                    .FirstOrDefault()
+                    .CreatedAt;
+                bool tweetsAreUpToDate = (now - latestTweetDate) < tweetAgeThreshold;
+                if (tweetsAreUpToDate) return tweets;
+            }
+
+            // Get new Tweets from API
+            // TODO: get only new tweets
+            var apiTweets = (List<Tweet>) GetFromApi(subject);
+            tweets.AddRange(apiTweets);
+
+            // Save new Tweets
+            if (apiTweets.Count > 0)
+            {
+                var newTweets = new SubjectTweets
+                {
+                    Subject = subject,
+                    Tweets = apiTweets
+                };
+                SaveToStorage(newTweets);
+            }
+
             return tweets;
         }
 
