@@ -55,11 +55,12 @@ namespace GroupA.FolksOpinion.UI.Models
                 if (apiTweetsHaul.Count < 100) continue;
 
                 // Find latest Tweet id, for next iteration, if required
-                if (i < apiCallCountLimit - 1) break;
-                    latestTweetId = apiTweetsHaul
-                        .Where(t => t.CreatedAt == apiTweetsHaul.Max(x => x.CreatedAt))
-                        .FirstOrDefault()
-                        .id_str;
+                var apiCallCount = i + 1;
+                if (apiCallCount >= apiCallCountLimit) break;
+                latestTweetId = apiTweetsHaul
+                    .Where(t => t.CreatedAt == apiTweetsHaul.Max(x => x.CreatedAt))
+                    .FirstOrDefault()
+                    .id_str;
             }
             tweets.AddRange(apiTweets);
 
