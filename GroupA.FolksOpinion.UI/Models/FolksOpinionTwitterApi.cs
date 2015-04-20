@@ -35,9 +35,6 @@ namespace GroupA.FolksOpinion.UI.Models
         // Singleton instance.
         private static readonly FolksOpinionTwitterApi instance = new FolksOpinionTwitterApi();
         
-        private static int numTweetsToRetrieve = 100; // Tweets per request.
-        private static int numRequestsToPerform = 10; // Requests per subject.
-        
         private FolksOpinionTwitterApi()
         {
             var keysLoaded = LoadKeysFromConfig();
@@ -56,28 +53,16 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Returns a colection of Tweets matching a search term. */
-        // TODO: Refactor this mess.
-        public IEnumerable<Tweet> GetTweets(string searchTerm)
+        public IEnumerable<Tweet> GetTweets(string searchTerm, string sinceId = "0")
         {
-            var tweets = new List<Tweet>();
-            var tweetsJson = GetTweetsJson(searchTerm);
+            // Try to get Tweets
+            var tweetsJson = GetTweetsJson(searchTerm, sinceId);
+            if (string.IsNullOrEmpty(tweetsJson))
+                return new List<Tweet>();
 
-            if (!string.IsNullOrEmpty(tweetsJson))
-            {
-                var tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
-                tweets.AddRange(tweetSearchResponse.statuses);
-
-                for (var i=1; i<numRequestsToPerform; i++)
-                {
-                    tweetsJson = GetApiResource("/1.1/search/tweets.json"
-                        + tweetSearchResponse.search_metadata.next_results);
-                    tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
-                    try { tweets.AddRange(tweetSearchResponse.statuses); }
-                    catch { break; }
-                }
-            }
-            
-            return tweets;
+            // Deserialise Tweets
+            var tweetSearchResponse = JsonConvert.DeserializeObject<GetSearchTweetsResponse>(tweetsJson);
+            return tweetSearchResponse.statuses;
         }
 
         /* Returns a collection of trending topics for a given place. 

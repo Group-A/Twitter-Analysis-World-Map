@@ -206,9 +206,13 @@ namespace GroupA.FolksOpinion.UI.Models
         }
 
         /* Gets Tweets matching a search term, using GetApiResource. */
-        public string GetTweetsJson(string searchTerm)
+        public string GetTweetsJson(string searchTerm, string sinceId = "0")
         {
-            return GetApiResource("/1.1/search/tweets.json?q=" + searchTerm + "&count=100");
+            return GetApiResource("/1.1/search/tweets.json?" +
+                "q=" + searchTerm +
+                "&since_id=" + sinceId +
+                "&result_type=recent" +
+                "&count=100");
         }
 
         /* Gets trends for a WOEID (location).

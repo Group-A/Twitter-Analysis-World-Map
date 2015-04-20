@@ -9,6 +9,7 @@
  *              - Extracts the text from tweets to get Opinion.
  */
 
+using System;
 namespace GroupA.FolksOpinion.UI.Models
 {
     public class TweetAnalyser
@@ -36,6 +37,16 @@ namespace GroupA.FolksOpinion.UI.Models
                 Tweet = tweet,
                 Opinion = analyser.Analyse(tweet.text)
             };
+        }
+
+        private TweetOpinion GetFromStorage(string tweetId)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SaveToStorage(TweetOpinion tweetOpinion)
+        {
+            throw new NotImplementedException();
         }
     }
 }

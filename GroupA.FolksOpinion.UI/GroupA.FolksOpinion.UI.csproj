@@ -119,13 +119,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\IFolksOpinionStorage.cs" />
     <Compile Include="Models\ILexicalBiasAnalyser.cs" />
-    <Compile Include="Models\MySQLInterface.cs" />
-    <Compile Include="Models\MySQLTwitterCacheEngine.cs" />
+    <Compile Include="Models\MySqlInterface.cs" />
+    <Compile Include="Models\MySqlStorage.cs" />
     <Compile Include="Models\Opinionator.cs" />
+    <Compile Include="Models\StorageManager.cs" />
     <Compile Include="Models\TrendingTopics.cs" />
     <Compile Include="Models\TweetAnalyser.cs" />
-    <Compile Include="Models\TwitterCacheEngine.cs" />
+    <Compile Include="Models\TweetManager.cs" />
     <Compile Include="Models\FolksOpinionTwitterApi.cs" />
     <Compile Include="Models\TwitterEntities.cs" />
     <Compile Include="Models\OpinionEntities.cs" />
