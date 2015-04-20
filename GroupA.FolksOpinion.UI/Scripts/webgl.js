@@ -434,16 +434,16 @@ function drawLoop() {
 
     // Rotate the world based on the keys being pressed
     if (keyboard.keys[keyboard.left])
-        worldPosition.targetXAngle -= delta * rotateSpeed / worldPosition.zoom;
+        worldPosition.targetXAngle += delta * rotateSpeed / worldPosition.zoom;
 
     if (keyboard.keys[keyboard.right])
-        worldPosition.targetXAngle += delta * rotateSpeed / worldPosition.zoom;
+        worldPosition.targetXAngle -= delta * rotateSpeed / worldPosition.zoom;
 
     if (keyboard.keys[keyboard.up]) {
         if (keyboard.keys[keyboard.control]) // Zoom in or out if control is held
             worldPosition.targetZoom += delta * worldPosition.targetZoom;
         else
-            worldPosition.targetYAngle -= delta * rotateSpeed / worldPosition.zoom;
+            worldPosition.targetYAngle += delta * rotateSpeed / worldPosition.zoom;
     }
 	
     // Switch renderers if the space button is pressed.
@@ -454,7 +454,7 @@ function drawLoop() {
         if (keyboard.keys[keyboard.control]) // Zoom out if the control key is held
             worldPosition.targetZoom -= delta * worldPosition.targetZoom;
         else
-            worldPosition.targetYAngle += delta * rotateSpeed / worldPosition.zoom;
+            worldPosition.targetYAngle -= delta * rotateSpeed / worldPosition.zoom;
     }
 	
     // Clamp the zoom and the Y rotation values to resonable amounts.
