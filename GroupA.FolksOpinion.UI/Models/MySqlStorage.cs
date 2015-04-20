@@ -91,18 +91,20 @@ namespace GroupA.FolksOpinion.UI.Models
 
         public SubjectTweets GetSubjectTweets(string subject)
         {
-            MySqlDataReader reader = sql.Select("SubjectTweets", "subject = " + subject, null);
+            var subject_tweets =  new SubjectTweets
+            {
+                Subject = subject,
+                Tweets = new List<Tweet>()
+            };
+            
+            MySqlDataReader reader = sql.Select("SubjectTweet", "subject = " + subject, null);
             if (!reader.HasRows)
-                return null;
-
-            SubjectTweets subject_tweets = new SubjectTweets();
-            List<Tweet> tweets = new List<Tweet>();
-            subject_tweets.Subject = subject;
-            subject_tweets.Tweets = tweets;
+                return subject_tweets;
 
             DataTable dt = new DataTable();
             dt.Load(reader);
 
+            List<Tweet> tweets = new List<Tweet>();
             foreach(DataRow row in dt.Rows)
             {
                 foreach(DataColumn col in dt.Columns)
@@ -115,6 +117,7 @@ namespace GroupA.FolksOpinion.UI.Models
                     }
                 }
             }
+            subject_tweets.Tweets = tweets;
 
             return subject_tweets;
         }
@@ -234,7 +237,9 @@ namespace GroupA.FolksOpinion.UI.Models
         /* Returns the ID of the inserted tweet */
         private int InsertTweet(Tweet tweet)
         {
-            string place = GetPlaceCountryCode(tweet.place); // Get countryCode for Place from DB
+            var place = "";
+            if (tweet.place != null)
+                place = GetPlaceCountryCode(tweet.place); // Get countryCode for Place from DB
 
             /* Build table set and insert new row */
             List<Tuple<string, string>> tweet_columns = new List<Tuple<string, string>>();

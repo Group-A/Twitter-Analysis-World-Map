@@ -302,7 +302,7 @@ namespace GroupA.FolksOpinion.UI.Models
             /* Build and execute query */
             string query = "SELECT " + query_columns + " FROM " + table_name;
             if (!string.IsNullOrEmpty(identifier)) // Append where clause if necessary
-                query += " WHERE " + identifier;
+                query += " WHERE '" + identifier + "'";
             query += ";";
 
             return ExecuteReaderQuery(query);
