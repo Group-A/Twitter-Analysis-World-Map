@@ -101,12 +101,12 @@ function searchCustomTerm(event) {
 // Request country opinion data on the topic passed in.
 function requestTopic(topic) {
     // Create a http request for the option data
-    var searchField = document.getElementById("customSearchTermField");
+    var searchField = document.getElementsByClassName("windows8")[0];
     var url = "/Data/Opinion?q=" + encodeURIComponent(topic);
     var request = newRequest();
     // If the request is processing then show a processing gif.
     if (request.readyState < 4) {
-        searchField.style.backgroundImage = "~/Content/Images/process.gif";
+        searchField.style.display = "block";
     }
     // Execute the request
     request.open("GET", url, true);
@@ -115,14 +115,14 @@ function requestTopic(topic) {
 
     // Upon loading the new topic data
     request.onload = function (e) {
-        // Clear the spinner
-        searchField.style.backgroundImage = "~/Content/Images/customSearchTermFieldBackground.png";
         // Clear old screen reader
         clearScreenReader();
         // Read the new data and parse it
         parseJSONData(request.response);
         // Re-draw the map texture
         renderMap(false);
+        // Clear the spinner
+        searchField.style.display = "none";
     }.bind(this);
 
     request.send();
