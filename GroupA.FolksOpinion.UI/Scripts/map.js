@@ -60,7 +60,12 @@ function parseJSONData(string) {
 
     // Zero out any previous results
     for (var i in countries)
+    {
         countries[i].attitude = 0;
+        countries[i].negativeBias = 0;
+        countries[i].positiveBias = 0;
+    }
+        
 
     // parse the json
     var data = JSON.parse(string);
@@ -80,6 +85,11 @@ function parseJSONData(string) {
             countries[opinion.Country].attitude =
                 opinion.Opinion.PositiveBias
               - opinion.Opinion.NegativeBias;
+
+            countries[opinion.Country].negativeBias =
+                opinion.Opinion.NegativeBias;
+            countries[opinion.Country].positiveBias =
+                opinion.Opinion.PositiveBias
         }
     }
     // Generate a screen reader friendly table from the data
@@ -199,7 +209,7 @@ function parseSvg(content, countryCode) {
             // Get each of the polygons that make up the path
             var polygons = parsePath(paths[p].getAttribute("d"));
             // Create a country that is made up of the loaded polygons
-            var country = new Country(polygons, 0);
+            var country = new Country(polygons, 0, 0, 0);
             // Calculate a center for the country and get it's name.
             country.calculateCenter();
             country.setName(code, paths[p].getAttribute("title"));
@@ -329,10 +339,19 @@ function drawCountry(ctx, country)
     var attitude = country.attitude;
 
     // Generate a colour form the attitude of the country.
-    if (attitude > 0)
-        ctx.fillStyle = neutralColor.blend(positiveColor, attitude).getHex();
-    else
-        ctx.fillStyle = neutralColor.blend(negativeColor, Math.abs(attitude)).getHex();
+    // Old version
+    /*
+        if (attitude > 0)
+            ctx.fillStyle = neutralColor.blend(positiveColor, attitude).getHex();
+        else
+            ctx.fillStyle = neutralColor.blend(negativeColor, Math.abs(attitude)).getHex();
+    */
+    // New Version
+    attitude = ((country.positiveBias - country.negativeBias) / 2) + 0.5;
+    participation = clamp((country.positiveBias + country.negativeBias), 0, 1);
+    ctx.fillStyle = negativeColor.blend(positiveColor, attitude)
+                        .blend(neutralColor, 1-participation).getHex();
+    
 
     // Draw each of the polygons in the country
     for (var i = 0; i < polygons.length; ++i) {
@@ -406,9 +425,11 @@ function isUpperCase(string) {
 // Used to store a group of polygons that make up a country and the attitude that
 // the country has towards the topic.
 
-function Country(polygons, attitude) {
+function Country(polygons, attitude, negativeBias, positiveBias) {
     this.polygons = polygons;
     this.attitude = attitude === undefined ? 0 : attitude;
+    this.negativeBias = negativeBias === undefined ? 0 : negativeBias;
+    this.positiveBias = positiveBias === undefined ? 0 : positiveBias;
     this.center = new Vector2();
     this.name = "";
     this.code = "";
