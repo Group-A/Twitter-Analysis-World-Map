@@ -176,6 +176,10 @@ a {
 	line-height:                           28px;
 }
 
+.modalBox a {
+    color:                                 #009EC3;
+}
+
 /* Custom Scroll Bar */
 .scrollBarTrack {
 	position:                   absolute;
